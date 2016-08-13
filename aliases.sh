@@ -27,8 +27,8 @@ elif [[ $platform == 'freebsd' ]]; then
    alias l.='ls -Gd .* -G'
 fi
 
-# psf
-alias psf='ps aux | grep --color=auto'
+# process find
+alias pf='ps aux | grep --color=auto'
 
 ## Colorize the grep command output for ease of use (good for log files)##
 alias grep='grep --color=auto'
