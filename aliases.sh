@@ -6,6 +6,8 @@ if [[ "$unamestr" == 'Linux' ]]; then
    platform='linux'
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
    platform='freebsd'
+elif [[ "$unamestr" == 'Darwin' ]]; then
+   platform='darwin'
 fi
 
 
@@ -22,7 +24,7 @@ alias .5='cd ../../../../..'
 if [[ $platform == 'linux' ]]; then
    alias ls='ls --color=auto'
    alias l.='ls -d .* --color=auto'
-elif [[ $platform == 'freebsd' ]]; then
+elif [[ $platform == 'freebsd' || $platform == 'darwin' ]]; then
    alias ls='ls -G'
    alias l.='ls -Gd .* -G'
 fi

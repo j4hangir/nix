@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # environment variables
-EDTOR=$(which vim)
-PYTHONIOENCODING=utf8
-
+export EDTOR=$(which vim)
+export PYTHONIOENCODING=utf8
+export HISTCONTROL=ignoreboth:erasedups
