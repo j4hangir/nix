@@ -23,3 +23,6 @@ fi
 
 #echo $ins
 $ins install -y tree
+
+# multi-threaded downloader
+$ins install -y axel

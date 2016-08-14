@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-os=$(utils/os_detect.sh)
+os=`$NIXDIR/utils/os_detect.sh`
 # recursive and verbose
 alias mkdir="mkdir -pv"
 
