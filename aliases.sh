@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
-
-platform='unknown'
-unamestr=`uname`
-if [[ "$unamestr" == 'Linux' ]]; then
-   platform='linux'
-elif [[ "$unamestr" == 'FreeBSD' ]]; then
-   platform='freebsd'
-elif [[ "$unamestr" == 'Darwin' ]]; then
-   platform='darwin'
-fi
-
-
+os=$(utils/os_detect.sh)
 # recursive and verbose
 alias mkdir="mkdir -pv"
 
@@ -21,10 +10,10 @@ alias .....='cd ../../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
-if [[ $platform == 'linux' ]]; then
+if [[ $os == 'linux' ]]; then
    alias ls='ls --color=auto'
    alias l.='ls -d .* --color=auto'
-elif [[ $platform == 'freebsd' || $platform == 'darwin' ]]; then
+elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
    alias ls='ls -G'
    alias l.='ls -Gd .* -G'
 fi
@@ -51,3 +40,10 @@ alias wget='wget -c'
 # Disk usage
 # disk usage, total, human and summarized
 alias dush='du -chs'
+
+
+# Count files
+alias fcount="bash $NIXDIR/utils/count_files.sh"
+alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
+
+
