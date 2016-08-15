@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 os=`$NIXDIR/utils/os_detect.sh`
+
 # recursive and verbose
 alias mkdir="mkdir -pv"
 
@@ -21,6 +22,11 @@ fi
 # process find
 alias pf='ps aux | grep --color=auto'
 
+# cd and ls
+cdl () {
+  cd $1 && ls
+}
+
 # recurive mk and pushd
 mkpd () {
   if [ "$#" -lt 1 ]; then
@@ -32,13 +38,13 @@ mkpd () {
   pushd $last
 }
 
-# cp & pushd
+# cp & mv pushd
 __cpmvpd () {
   if [ "$#" -le 1 ]; then
     echo "Illegal number of parameters"
     return 
   fi
-  echo $@
+#  echo $@
   $@
   # last arg
   for last; do true; done
