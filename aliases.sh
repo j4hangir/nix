@@ -21,6 +21,51 @@ fi
 # process find
 alias pf='ps aux | grep --color=auto'
 
+# recurive mk and pushd
+mkpd () {
+  if [ "$#" -lt 1 ]; then
+    echo "Illegal number of parameters"
+    return
+  fi
+  for last; do true; done
+  mkdir -pv $@
+  pushd $last
+}
+
+# cp & pushd
+__cpmvpd () {
+  if [ "$#" -le 1 ]; then
+    echo "Illegal number of parameters"
+    return 
+  fi
+  echo $@
+  $@
+  # last arg
+  for last; do true; done
+  #penultimate = "${@:(-2):1}"
+  if [[ -f $last ]]; then
+    last=$(dirname "${last}") 
+  fi 
+  if [[ -d $last ]]; then
+    pushd $last
+  else
+    echo "'$last' is not a directory!"
+  fi
+}
+
+# cp & pushd
+cpd () {
+  __cpmvpd "cp" $@
+}
+
+# mv $ pushd
+mvpd () {
+  __cpmvpd "mv" $@
+}
+
+
+
+
 ## Colorize the grep command output for ease of use (good for log files)##
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
@@ -45,5 +90,9 @@ alias dush='du -chs'
 # Count files
 alias fcount="bash $NIXDIR/utils/count_files.sh"
 alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
+
+# Cd to nix
+alias cdnix="pushd $NIXDIR"
+
 
 
