@@ -4,8 +4,8 @@ os=`$NIXDIR/utils/os_detect.sh`
 alias mkdir="mkdir -pv"
 
 alias ..='cd ..'
-alias ...='cd ../../../'
-alias ....='cd ../../../../'
+alias ...='cd ../../'
+alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
