@@ -68,9 +68,6 @@ mvpd () {
   __cpmvpd "mv" $@
 }
 
-
-
-
 ## Colorize the grep command output for ease of use (good for log files)##
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
@@ -100,5 +97,44 @@ alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
 alias cdnix="pushd $NIXDIR"
 
 # Axel: default to alternate progress bar
-alias axel="axel -a "
+alias axel="axel -n 10 -a"
+
+
+# naliased:start
+# naliased:end
+
+
+# new alias with optional description
+nalias () {
+ nalias_usage() { echo "nalias: [-d <arg>] alias cmd" 1>&2; return; }
+
+  local OPTIND o d
+  while getopts ":d:" o; do
+      case "${o}" in
+          d)
+              d="${OPTARG}"
+              ;;
+          *)
+              nalias_usage
+              ;;
+      esac
+    done
+    shift $((OPTIND-1))
+    if [ "$#" -lt 2 ]; then
+      nalias_usage
+    fi
+    # echo "d: [${d}], non-option arguments: $*"  
+    alias=$1
+    shift
+    desc=""
+    if [ ! -z "$d" ]; then
+      desc="\\n# $d\\n"; 
+    fi
+    LINE=$desc"alias $alias='$*'"
+    FILE="$NIXDIR/aliases.sh"
+    cp $FILE $FILE.bak
+    grep -q "$LINE" "$FILE" || ( echo $alias aliased && awk '!found && /naliased:start/{on=1; found=1} on&&/naliased:end/{print "'$LINE'"; on=0} {print}' $FILE > $FILE.tmp)
+    mv $FILE.tmp $FILE
+    source $FILE
+}
 
