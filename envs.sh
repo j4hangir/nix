@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # environment variables
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 export NIXDIR=$DIR
 export EDTOR=$(which vim)
 export PYTHONIOENCODING=utf8

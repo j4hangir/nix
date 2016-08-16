@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+command -v zsh >/dev/null 2>&1 || $DIR/install_zsh.sh
 LINE="source $DIR/init.sh"
-FILE=/etc/bashrc
+#FILE=/etc/bashrc
+FILE=/etc/zshrc
 
 # Prefer prepending to preserve user configs and special aliases
 # bashrc

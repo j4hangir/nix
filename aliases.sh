@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 os=`$NIXDIR/utils/os_detect.sh`
 
 # recursive and verbose
@@ -21,7 +21,6 @@ fi
 
 # process find
 alias pf='ps aux | grep --color=auto'
-
 # cd and ls
 cdl () {
   cd $1 && ls
@@ -100,5 +99,6 @@ alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
 # Cd to nix
 alias cdnix="pushd $NIXDIR"
 
-
+# Axel: default to alternate progress bar
+alias axel="axel -a "
 
