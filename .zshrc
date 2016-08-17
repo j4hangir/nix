@@ -1,7 +1,5 @@
-source /root/nix/init.sh
-
 # Autoload screen if we aren't in it.  (Thanks Fjord!)
-if [[ $STY = '' ]] then screen -xR; fi
+#if [[ $STY = '' ]] then screen -xR; fi
 
 #{{{ ZSH Modules
 
@@ -34,7 +32,7 @@ setopt GLOB_COMPLETE
 setopt PUSHD_MINUS
 
 # No more annoying pushd messages...
-# setopt PUSHD_SILENT
+setopt PUSHD_SILENT
 
 # blank pushd goes to home
 setopt PUSHD_TO_HOME
@@ -70,6 +68,6 @@ setopt NO_CLOBBER
 # Case insensitive globbing
 setopt NO_CASE_GLOB
 
-ZSH_THEME="robbyrussell"
+#ZSH_THEME="robbyrussell"
 
 plugins=(git bundler osx rake ruby zsh-syntax-highlighting)
