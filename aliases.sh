@@ -68,6 +68,18 @@ mvpd () {
   __cpmvpd "mv" $@
 }
 
+# Disk usage
+# disk usage, total, human and summarized
+dush () {
+  if [ "$#" -lt 1 ]; then
+    du -csh *
+  else
+    du -chs $@
+  fi
+}
+
+
+
 ## Colorize the grep command output for ease of use (good for log files)##
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
@@ -82,11 +94,6 @@ alias diff='colordiff'
 alias dl='curl -O'
 # wget resume by default
 alias wget='wget -c'
-
-
-# Disk usage
-# disk usage, total, human and summarized
-alias dush='du -chs'
 
 
 # Count files

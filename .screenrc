@@ -1,0 +1,21 @@
+# None of my own work. Munged from various other .screenrc recipes
+#
+# Don't use CTRL-A as the trigger because its stops the bash 
+# cli navigation like CTRL-A for start of line to stop working
+# Instead, ^b
+escape ^Bb
+
+# We'd like to scroll in an xterm please
+defscrollback 1024
+
+# http://superuser.com/questions/126606/how-to-get-mac-os-x-terminal-app-and-screen-vim-scrolling-to-play-nice/316900#316900
+termcapinfo xterm-256color|xterm-color|xterm|xterms|xs|rxvt ti@:te@
+
+# Allow bold colors - necessary for some reason
+attrcolor b ".I"
+
+# Change the hardstatus settings to give an window list at the bottom of the
+# screen with the current window highlighted
+hardstatus alwayslastline 
+hardstatus string '%{= kG}%{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}'
+
