@@ -12,10 +12,12 @@ alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
 if [[ $os == 'linux' ]]; then
-   alias ls='ls --color=auto'
+   alias l='ls --color=auto'
+   alias ls='ls --color=auto -lah'
    alias l.='ls -d .* --color=auto'
 elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
-   alias ls='ls -G'
+   alias l='ls -G'
+   alias ls='ls -G -lah'
    alias l.='ls -Gd .* -G'
 fi
 
@@ -27,7 +29,7 @@ cdl () {
 }
 
 # recurive mk and pushd
-mkpd () {
+mkpu () {
   if [ "$#" -lt 1 ]; then
     echo "Illegal number of parameters"
     return
@@ -64,7 +66,7 @@ cpd () {
 }
 
 # mv $ pushd
-mvpd () {
+mvpu () {
   __cpmvpd "mv" $@
 }
 
@@ -78,6 +80,17 @@ dush () {
   fi
 }
 
+# get line #: li -1
+li () {
+  if [ "$#" -lt 1 ]; then
+    head -n 1
+  elif [ "$1" -lt 0 ]; then
+    1=`expr -1 "*" $1`
+    tail -n $1 | head -n 1
+  else
+    head -n $1 | tail -n 1
+  fi
+}
 
 
 ## Colorize the grep command output for ease of use (good for log files)##
@@ -108,6 +121,7 @@ alias axel="axel -n 10 -a"
 
 
 # naliased:start
+alias pyg='pushd /Users/racine/pygram'
 # naliased:end
 
 
