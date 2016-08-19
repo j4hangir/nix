@@ -12,13 +12,13 @@ alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
 if [[ $os == 'linux' ]]; then
-   alias l='ls --color=auto'
-   alias ls='ls --color=auto -lah'
-   alias l.='ls -d .* --color=auto'
+   alias l='\ls --color=auto'
+   alias ls='\ls --color=auto -lah'
+   alias l.='\ls -d .* --color=auto'
 elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
-   alias l='ls -G'
-   alias ls='ls -G -lah'
-   alias l.='ls -Gd .* -G'
+   alias l='\ls -G'
+   alias ls='\ls -G -lah'
+   alias l.='\ls -Gd .* -G'
 fi
 
 # process find
