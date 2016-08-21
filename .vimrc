@@ -8,4 +8,7 @@ set shiftwidth=2
 set smartindent
 "set cindent
 set whichwrap+=<,>,h,l,[,]
+
+" These two should come together
+set ignorecase
 set smartcase
