@@ -22,7 +22,7 @@ elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
 fi
 
 # process find
-alias pf='ps aux | grep --color=auto'
+alias pf='ps aux | grep --color=auto -i'
 # cd and ls
 cdl () {
   cd $1 && ls
@@ -70,6 +70,16 @@ mvpu () {
   __cpmvpd "mv" $@
 }
 
+# tar file, compress
+gz () {
+  if [ "$#" -lt 1 ]; then
+    echo usage gz FILE
+    return
+  fi
+  echo Compressing $1.gzip
+  pigz < $1 > $1.gzip
+}
+
 # Disk usage
 # disk usage, total, human and summarized
 dush () {
@@ -92,6 +102,10 @@ li () {
   fi
 }
 
+# Run relative script with absolute path
+.a () {
+  echo -n `pwd`/$@
+}
 
 ## Colorize the grep command output for ease of use (good for log files)##
 alias grep='grep --color=auto'
@@ -103,9 +117,6 @@ alias ack='ack --color'
 # install  colordiff package :)
 alias diff='colordiff'
 
-# Download aliases
-alias dl='curl -O'
-# wget resume by default
 alias wget='wget -c'
 
 
@@ -119,9 +130,15 @@ alias cdnix="pushd $NIXDIR"
 # Axel: default to alternate progress bar
 alias axel="axel -n 10 -a"
 
+# Download aliases
+alias dl='axel -n 10 -a'
+# wget resume by default
+
 
 # naliased:start
 alias pyg='pushd /Users/racine/pygram'
+alias hosts='sudo vim /etc/hosts'
+alias pip='pip3'
 # naliased:end
 
 

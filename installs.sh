@@ -26,3 +26,6 @@ $ins install -y tree
 
 # multi-threaded downloader
 $ins install -y axel
+
+# multiprocesor gzip
+$ins install -y pigz
