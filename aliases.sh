@@ -76,8 +76,8 @@ gz () {
     echo usage gz FILE
     return
   fi
-  echo Compressing $1.gzip
-  pigz < $1 > $1.gzip
+  echo Compressing $1.gz
+  pigz < $1 > $1.gz
 }
 
 # Disk usage
