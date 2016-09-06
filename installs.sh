@@ -22,10 +22,10 @@ elif [ "$os" = "linux"]; then
 fi
 
 #echo $ins
-$ins install -y tree
+$ins install tree -y
 
 # multi-threaded downloader
-$ins install -y axel
+$ins install axel -y
 
 # multiprocesor gzip
-$ins install -y pigz
+$ins install pigz -y

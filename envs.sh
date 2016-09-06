@@ -6,6 +6,7 @@ export EDTOR=$(which vim)
 export PYTHONIOENCODING=utf8
 export HISTCONTROL=ignoreboth:erasedups
 export HISTFILESIZE=100000
+export SCREENRC="$DIR/.screenrc"
 # case-insenitive and colored
 export LESS=-Ri
 
