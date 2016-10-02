@@ -104,7 +104,7 @@ li () {
 
 # create tar.gz file
 ftar () {
-  if [ "$#" -lt 2]; then
+  if [ "$#" -lt 2 ]; then
     echo "ftar <fname> <path>"
     return
   fi
