@@ -105,10 +105,12 @@ li () {
 # create tar.gz file
 ftar () {
   if [ "$#" -lt 2 ]; then
-    echo "ftar <fname> <path>"
+    echo "ftar <fname> [path]"
     return
   fi
-  tar -c --use-compress-program=pigz -f "$1.tar.gz" "$2"
+  fname=$1
+  shift;
+  tar -c --use-compress-program=pigz -f "$fname.tar.gz" "$@"
 }
 
 # Run relative script with absolute path

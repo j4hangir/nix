@@ -29,3 +29,6 @@ $ins install axel -y
 
 # multiprocesor gzip
 $ins install pigz -y
+
+# on file-change reloads scripts 
+$ins install entr -y
