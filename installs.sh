@@ -12,7 +12,7 @@ if [ "$os" = "mac" ]; then
       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
   ins="brew"
-elif [ "$os" = "linux"]; then
+elif [ "$os" = "linux" ]; then
   which -s yum
   if [[ $? != 0 ]] ; then
     ins="sudo apt-get"

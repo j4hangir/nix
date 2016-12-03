@@ -11,14 +11,17 @@ alias .....='cd ../../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
+alias htop='sudo htop'
+
 if [[ $os == 'linux' ]]; then
-   alias l='\ls --color=auto'
-   alias ls='\ls --color=auto -lah'
-   alias l.='\ls -d .* --color=auto'
+   alias l='\ls --color=auto -tr'
+   alias ls='\ls --color=auto -lahtr'
+   alias l.='\ls -d .* --color=auto -tr'
 elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
-   alias l='\ls -G'
-   alias ls='\ls -G -lah'
-   alias l.='\ls -Gd .* -G'
+   alias l='\ls -Gtr'
+   alias ls='\ls -G -lahtr'
+   alias l.='\ls -Gd .* -Gtr'
+   alias updatedb='sudo /usr/libexec/locate.updatedb'
 fi
 
 # process find
