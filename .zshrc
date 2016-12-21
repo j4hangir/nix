@@ -1,5 +1,6 @@
 # Autoload screen if we aren't in it.  (Thanks Fjord!)
 #if [[ $STY = '' ]] then screen -xR; fi
+#if [[ $STY = '' ]] then tmux attach-session; fi
 
 #{{{ ZSH Modules
 

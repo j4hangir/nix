@@ -32,3 +32,8 @@ $ins install pigz -y
 
 # on file-change reloads scripts 
 $ins install entr -y
+
+$ins install ack -y
+
+# network load
+$ins install nload -y

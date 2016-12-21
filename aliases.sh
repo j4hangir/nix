@@ -22,6 +22,9 @@ elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
    alias ls='\ls -G -lahtr'
    alias l.='\ls -Gd .* -Gtr'
    alias updatedb='sudo /usr/libexec/locate.updatedb'
+   srch() {
+     mdfind -name $@ 
+   }
 fi
 
 # process find
@@ -138,7 +141,7 @@ alias wget='wget -c'
 alias fcount="bash $NIXDIR/utils/count_files.sh"
 alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
 
-# Cd to nix
+# cd to nix
 alias cdnix="pushd $NIXDIR"
 
 # Axel: default to alternate progress bar
@@ -150,13 +153,12 @@ alias dl='axel -n 10 -a'
 
 
 # naliased:start
-alias pyg='pushd /Users/racine/pygram'
 alias hosts='sudo vim /etc/hosts'
 alias pip='pip3'
 # naliased:end
 
 
-# new alias with optional description
+# create new alias with optional description
 nalias () {
  nalias_usage() { echo "nalias: [-d <arg>] alias cmd" 1>&2; return; }
 
