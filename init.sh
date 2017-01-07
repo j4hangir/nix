@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
+unsetopt autopushd
 source $DIR/envs.sh
 source $DIR/aliases.sh
 #source $DIR/.zshrc
