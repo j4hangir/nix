@@ -4,6 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 unsetopt autopushd
 source $DIR/envs.sh
 source $DIR/aliases.sh
+source $DIR/antigen.zsh
 #source $DIR/.zshrc
 echo "                _          _    __   _              _       __  
 __/\__  _ __   (_) __  __ (_)  / _| (_)   ___    __| |   _  \ \ 
