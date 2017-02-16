@@ -2,6 +2,8 @@
 #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 unsetopt autopushd
+SPATH=$DIR/scripts
+[[ ":$PATH:" != *":$SPATH:"* ]] && PATH="$SPATH:${PATH}"
 source $DIR/envs.sh
 source $DIR/aliases.sh
 source $DIR/antigen.zsh
