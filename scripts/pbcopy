@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+cat | nc -q1 localhost 2224 
