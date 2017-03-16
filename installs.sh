@@ -26,19 +26,11 @@ elif [ "$os" = "linux" ]; then
   fi
 fi
 
-#echo $ins
-$ins install tree -y
+# axel: multi-threaded downloader
+# nload: network load
+# ack: better grep
+# entr: on file-change reloads command
 
-# multi-threaded downloader
-$ins install axel -y
+packages="tree axel entr ack nload htop pigz"
 
-# multiprocesor gzip
-$ins install pigz -y
-
-# on file-change reloads scripts 
-$ins install entr -y
-
-$ins install ack -y
-
-# network load
-$ins install nload -y
+$ins install $packages -y

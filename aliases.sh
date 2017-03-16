@@ -45,6 +45,17 @@ mkpu () {
   pushd $last
 }
 
+getip () {
+  if [ "$#" -le 0 ]; then
+    echo "Illegal number of parameters"
+    return
+  fi
+  echo $@
+  IP=$(getent hosts $@ | awk '{ print $1 }' | li) 
+  echo $IP
+  $(echo $ip | pbcopy) 
+}
+
 # cp & mv pushd
 __cpmvpd () {
   if [ "$#" -le 1 ]; then
@@ -156,6 +167,7 @@ alias dl='axel -n 10 -a'
 alias hosts='sudo vim /etc/hosts'
 alias pip='pip3'
 alias virtualenv='python3 Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/virtualenv.py'
+alias runcrun='run-parts /etc/cron.daily'
 # naliased:end
 
 
