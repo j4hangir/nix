@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+if [ "$#" -le 0 ]; then
+  echo "Usage: string to search and delete"
+  exit
+fi
+LC_ALL=C sed -i '/$@/d' $HISTFILE
