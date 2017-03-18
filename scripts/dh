@@ -3,4 +3,4 @@ if [ "$#" -le 0 ]; then
   echo "Usage: string to search and delete"
   exit
 fi
-LC_ALL=C sed -i '/$@/d' $HISTFILE
+LC_ALL=C sed -i "/$@/d" $HISTFILE
