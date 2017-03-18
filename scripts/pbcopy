@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
-#cat | nc -q1 localhost 2224 
-cat | nc localhost 2224 
+if [ -f /etc/lsb-release ]; then
+  # ubuntu
+  cat | nc -q1 localhost 2224 
+else
+  cat | nc localhost 2224 
+fi

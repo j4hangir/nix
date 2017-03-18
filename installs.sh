@@ -31,6 +31,6 @@ fi
 # ack: better grep
 # entr: on file-change reloads command
 
-packages="tree axel entr ack nload htop pigz"
+packages="tree axel entr ack ack-grep nload htop pigz"
 
 $ins install $packages -y
