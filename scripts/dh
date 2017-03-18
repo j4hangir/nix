@@ -5,3 +5,4 @@ if [ "$#" -le 0 ]; then
   exit
 fi
 LC_ALL=C sed -i "/$@/d" "$HISTFILE"
+echo "$@ purged from $HISTFILE"
