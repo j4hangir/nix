@@ -1,8 +1,9 @@
 #!/usr/bin/env zsh
+setopt HIST_IGNORE_SPACE
 HISTFILE=$(echo "$HOME/.zsh_history")
 if [ "$#" -le 0 ]; then
   echo "Usage: string to search and delete"
   exit
 fi
-LC_ALL=C sed -i "/$@/d" "$HISTFILE"
+ LC_ALL=C sed -i "/$@/d" "$HISTFILE"
 echo "$@ purged from $HISTFILE"

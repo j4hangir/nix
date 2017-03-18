@@ -2,6 +2,9 @@
 #DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 unsetopt autopushd
+
+# ignore commands that start with space
+setopt HIST_IGNORE_SPACE
 SPATH=$DIR/scripts
 [[ ":$PATH:" != *":$SPATH:"* ]] && PATH="$SPATH:${PATH}"
 source $DIR/envs.sh
