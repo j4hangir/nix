@@ -31,7 +31,7 @@ fi
 alias pf='ps aux | grep --color=auto -i'
 # cd and ls
 cdl () {
-  cd $1 && ls
+  cd $1 && l
 }
 
 # recurive mk and pushd
