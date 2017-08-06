@@ -30,7 +30,8 @@ fi
 # nload: network load
 # ack: better grep
 # entr: on file-change reloads command
+# mosh: mobile shell: nearly perfect replacement for SSH
 
-packages="tree axel entr ack ack-grep nload htop pigz"
+packages="tree axel entr ack ack-grep nload htop pigz mosh mobile-shell"
 
 $ins install $packages -y

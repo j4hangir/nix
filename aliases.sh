@@ -34,6 +34,19 @@ cdl () {
   cd $1 && l
 }
 
+opf () {
+  if [[ $os == 'mac' ]]; then
+    c="netstat -atp tcp"
+  else
+    c="netstat -tulpn"
+  fi
+  if [ "$#" -le 1 ]; then
+    `$c`
+  else
+    `$c | ack $@`
+  fi
+}
+
 # recurive mk and pushd
 mkpu () {
   if [ "$#" -lt 1 ]; then
