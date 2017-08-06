@@ -13,6 +13,9 @@ alias .5='cd ../../../../..'
 
 alias htop='sudo htop'
 
+# get chmod code
+alias gch="stat --format '%a'"
+
 if [[ $os == 'linux' ]]; then
    alias l='\ls --color=auto -tr'
    alias ls='\ls --color=auto -lahtr'
