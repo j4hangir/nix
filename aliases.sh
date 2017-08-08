@@ -63,7 +63,8 @@ mkpu () {
 
 getip () {
   if [ "$#" -le 0 ]; then
-    echo "Illegal number of parameters"
+    echo Own IP:
+    curl -w '\n' 'https://api.ipify.org'
     return
   fi
   echo $@
