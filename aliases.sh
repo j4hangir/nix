@@ -43,10 +43,10 @@ opf () {
   else
     c="netstat -tulpn"
   fi
-  if [ "$#" -le 1 ]; then
-    `$c`
+  if [ "$#" -le 0 ]; then
+    eval "$c"
   else
-    `$c | ack $@`
+    eval "$c | ack $@"
   fi
 }
 
