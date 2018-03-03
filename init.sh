@@ -11,6 +11,14 @@ source $DIR/envs.sh
 source $DIR/aliases.sh
 source $DIR/antigen.zsh
 #source $DIR/.zshrc
+
+# antigen bundles
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle command-not-found
+#antigen use oh-my-zsh
+antigen use prezto
+
+
 echo "                _          _    __   _              _       __  
 __/\__  _ __   (_) __  __ (_)  / _| (_)   ___    __| |   _  \ \ 
 \    / | '_ \  | | \ \/ / | | | |_  | |  / _ \  / _\` |  (_)  | |

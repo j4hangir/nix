@@ -183,7 +183,6 @@ alias dl='axel -n 10 -a'
 # naliased:start
 alias hosts='sudo vim /etc/hosts'
 alias pip='pip3'
-alias virtualenv='python3 Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/virtualenv.py'
 alias runcrun='run-parts /etc/cron.daily'
 # naliased:end
 
