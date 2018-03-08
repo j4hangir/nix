@@ -32,6 +32,6 @@ fi
 # entr: on file-change reloads command
 # mosh: mobile shell: nearly perfect replacement for SSH
 
-packages="tree axel entr ack ack-grep nload htop pigz mosh mobile-shell git tmux"
+packages="tree axel entr ack ack-grep nload htop pigz mosh mobile-shell git tmux zsh"
 
 $ins install $packages -y

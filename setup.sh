@@ -31,6 +31,9 @@ grep -q "$LINE" "$FILE" || ( echo Prepending .vimrc to $FILE && echo -e "$LINE\n
 echo Installing default packages
 $DIR/installs.sh
 
+echo Changing default shell to zsh
+chsh -s `which zsh`
+
 source ~/.zshrc
 
 
