@@ -185,6 +185,8 @@ alias dl='axel -n 10 -a'
 alias hosts='sudo vim /etc/hosts'
 alias pip='pip3'
 alias runcrun='run-parts /etc/cron.daily'
+alias flushdns='sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache'
+alias =''
 # naliased:end
 
 
