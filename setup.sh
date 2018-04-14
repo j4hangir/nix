@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+mkdir -P ~/.nix
+touch ~/.nix/iTerm2-ssh.zsh
+echo  "# naliased:start
+alias hosts='sudo vim /etc/hosts'
+#alias runcrun='run-parts /etc/cron.daily'
+#alias flushdns='sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache'
+# naliased:end" > ~/.nix/aliases.zsh
+
 command -v zsh >/dev/null 2>&1 || $DIR/install_zsh.sh
 LINE="source $DIR/init.sh"
 #FILE=/etc/bashrc
