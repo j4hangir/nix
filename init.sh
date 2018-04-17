@@ -17,7 +17,8 @@ source $DIR/antigen.zsh
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle command-not-found
 #antigen use oh-my-zsh
-antigen use prezto
+#antigen use prezto
+source $DIR/.zshrc
 
 
 echo "                _          _    __   _              _       __  

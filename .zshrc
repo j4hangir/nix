@@ -1,6 +1,7 @@
 # Autoload screen if we aren't in it.  (Thanks Fjord!)
 #if [[ $STY = '' ]] then screen -xR; fi
 #if [[ $STY = '' ]] then tmux attach-session; fi
+if [ -x "$(command -v tmux)" ] && [ -z "$TMUX" ]; then tmux attach-session || tmux new-session; fi
 
 #{{{ ZSH Modules
 
@@ -88,4 +89,3 @@ setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history 
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
 #setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 setopt HIST_BEEP # Beep when accessing nonexistent history.
-echo yes
