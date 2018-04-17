@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-mkdir -P ~/.nix
+mkdir -p ~/.nix
 touch ~/.nix/iTerm2-ssh.zsh
 echo  "# naliased:start
 alias hosts='sudo vim /etc/hosts'
