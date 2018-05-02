@@ -184,6 +184,16 @@ alias axel="axel -n 10 -a"
 alias dl='axel -n 10 -a'
 # wget resume by default
 
+function getchmod {
+ if [ "$#" -lt 1 ]; then
+   echo Usage: getchmod {FILE}
+   return
+ fi
+ if [[ $os == 'mac' ]]; then stat -f "%OLp" $@;
+ else stat -c %a $@
+ fi
+}
+
 function substitute {
  if [ -z "$1" -o -z "$2" ]; then
  echo "Usage: substitue FROM_STRING TO_STRING [OPTION]..."

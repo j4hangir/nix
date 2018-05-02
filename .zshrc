@@ -1,7 +1,7 @@
 # Autoload screen if we aren't in it.  (Thanks Fjord!)
 #if [[ $STY = '' ]] then screen -xR; fi
 #if [[ $STY = '' ]] then tmux attach-session; fi
-if [ -x "$(command -v tmux)" ] && [ -z "$TMUX" ]; then tmux attach-session || tmux new-session; fi
+if [ -x "$(command -v tmux)" ] && [ -z "$TMUX" ]; then tmux attach-session || tmux; fi
 #{{{ ZSH Modules
 
 autoload -U compinit promptinit zcalc zsh-mime-setup
