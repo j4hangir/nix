@@ -38,6 +38,16 @@ cdl () {
 	cd $1 && l
 }
 
+trash () {
+  if [ "$#" -le 0 ]; then
+    echo "trash <files>"
+    return
+  fi
+  if [[ $os == 'mac' ]]; then
+    mv $@ ~/.Trash
+  fi
+}
+
 opf () {
 	if [[ $os == 'mac' ]]; then
 		c="netstat -antvp tcp"
