@@ -23,12 +23,12 @@ tab-reset() {
 color-ssh() {
   source ~/.nix/iTerm2-ssh.zsh 
   # copy the following lines into .iTerm2-ssh.zsh
-  ssh $*
+  \ssh $*
 }
 
 color-mosh() {
   source ~/.nix/iTerm2-ssh.zsh
-  mosh $*
+  \mosh $*
 }
 
 compdef _ssh color-ssh=ssh

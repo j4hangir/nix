@@ -40,7 +40,7 @@ cdl () {
 
 opf () {
 	if [[ $os == 'mac' ]]; then
-		c="netstat -antp tcp"
+		c="netstat -antvp tcp"
 	else
 		c="netstat -tulpn"
 	fi
