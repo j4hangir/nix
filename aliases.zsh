@@ -168,8 +168,17 @@ proxytoggle() {
 	toggle=
 	usage="Usage: proxytoggle {on|off,1|0}"
 	if [ "$#" -lt 1 ]; then
-    echo $usage
-    return
+    TOGGLE=$NIXDIR/.proxytoggle
+
+    if [ ! -e $TOGGLE ]; then
+      touch $TOGGLE
+      toggle=1
+    else
+      rm $TOGGLE
+      toggle=0
+    fi
+    #echo $usage
+    #return
 	elif [[ $1 == "on" || $1 == "1" ]]; then toggle=1
 	elif [[ $1 == "off" || $1 == "0" ]]; then toggle=0
 	else 
