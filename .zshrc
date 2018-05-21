@@ -113,3 +113,4 @@ setopt HIST_BEEP # Beep when accessing nonexistent history.
 # zle -N zle-line-init
 # zle -N zle-keymap-select
 # export KEYTIMEOUT=1
+export TERM="xterm-256color"
