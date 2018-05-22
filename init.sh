@@ -37,7 +37,6 @@ antigen apply
 #antigen use oh-my-zsh
 #antigen use prezto
 source $DIR/.zshrc
-source $DIR/themes/powerlevel9k/powerlevel9k.zsh-theme
 
 
 
