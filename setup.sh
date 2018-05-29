@@ -43,6 +43,10 @@ $DIR/installs.sh
 echo Installing oh my zsh
 $DIR/install_oh_my_zsh.sh
 
+echo Cloning submodules
+git submodule update --init --recursive
+git submodule update --recursive 
+
 source ~/.zshrc
 
 
