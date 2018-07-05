@@ -10,7 +10,9 @@ alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
-alias hick="history | ack -i"
+alias hick='history | ack -i'
+alias pu='pushd'
+alias po='popd'
 
 alias htop='sudo htop'
 
