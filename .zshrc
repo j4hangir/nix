@@ -43,7 +43,7 @@ setopt PUSHD_TO_HOME
 setopt PUSHD_IGNORE_DUPS
 
 # 10 second wait if you do something that will delete everything.  I wish I'd had this before...
-setopt RM_STAR_WAIT
+# setopt RM_STAR_WAIT
 
 # use magic (this is default, but it can't hurt!)
 setopt ZLE
