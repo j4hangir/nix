@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+json_escape () {
+    printf '%s' "$msg" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+}
+event=`cat ~/.nix/.notive`
+hostname=$(hostname)
+msg="🐲 $hostname"
+
+if [ ! -z "$1" ]; then
+  msg="<b>$msg</b>: <pre>$1</pre>"
+fi
+
+if [ -z "$event" ]; then event="nix"; fi
+
+msg=$(json_escape)
+json='{"auth":"nixifi3d","msg":'$msg',"event":"'$event'","mode":"html"}'
+#echo $json
+curl -d "$json" https://notive.jahulien.com > /dev/null 2>&1
