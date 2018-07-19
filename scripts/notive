@@ -2,7 +2,7 @@
 json_escape () {
     printf '%s' "$msg" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
 }
-event=`cat ~/.nix/.notive`
+event=`cat ~/.nix/.notive > /dev/null 2>&1`
 hostname=$(hostname)
 msg="🐲 $hostname"
 
