@@ -9,6 +9,10 @@ alias hosts='sudo vim /etc/hosts'
 #alias flushdns='sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache'
 # naliased:end" > ~/.nix/aliases.zsh
 
+# default event
+echo "null" > ~/.nix/.notive
+
+
 command -v zsh >/dev/null 2>&1 || $DIR/install_zsh.sh
 LINE="source $DIR/init.sh"
 #FILE=/etc/bashrc

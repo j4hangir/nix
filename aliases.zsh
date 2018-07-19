@@ -200,7 +200,7 @@ proxytoggle() {
 	# networksetup -setsocksfirewallproxy $SERVICE 127.0.0.1 $PORT off
 	for SERVICE in $SERVICES; do
     SERVICE=`trim $SERVICE`
-   	if [ $toggle == 1 ]; then 
+   	if [[ $toggle == 1 ]]; then 
       echo "$SERVICE -> 1"
       networksetup -setsocksfirewallproxystate $SERVICE on
     else
