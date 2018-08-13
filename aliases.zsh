@@ -19,7 +19,11 @@ alias htop='sudo htop'
 # get chmod code
 alias gch="stat --format '%a'"
 
+# kill process by cmd
 alias ckill="pkill -f "
+
+# reload nix
+alias renix='$NIXDIR/init.sh' 
 
 if [[ $os == 'linux' ]]; then
 	 alias l='\ls --color=auto -tr'
