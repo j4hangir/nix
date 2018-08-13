@@ -19,6 +19,8 @@ alias htop='sudo htop'
 # get chmod code
 alias gch="stat --format '%a'"
 
+alias ckill="pkill -f "
+
 if [[ $os == 'linux' ]]; then
 	 alias l='\ls --color=auto -tr'
 	 alias ls='\ls --color=auto -lahtr'
