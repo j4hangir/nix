@@ -22,8 +22,12 @@ alias gch="stat --format '%a'"
 # kill process by cmd
 alias ckill="pkill -f "
 
+#** Nix specific 
 # reload nix
-alias renix='$NIXDIR/init.sh' 
+alias nixre='$NIXDIR/init.sh' 
+# update nix
+alias nixup='pushd $NIXDIR; git pull; popd; $NIXDIR/init.sh' 
+alias nixdir='pushd NIXDIR'
 
 if [[ $os == 'linux' ]]; then
 	 alias l='\ls --color=auto -tr'
@@ -237,9 +241,6 @@ alias wget='wget -c'
 # Count files
 alias fcount="bash $NIXDIR/utils/count_files.sh"
 alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
-
-# cd to nix
-alias cdnix="pushd $NIXDIR"
 
 # Axel: default to alternate progress bar
 alias axel="axel -n 10 -a"
