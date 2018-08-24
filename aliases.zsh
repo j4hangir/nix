@@ -27,7 +27,7 @@ alias ckill="pkill -f "
 alias nixre='$NIXDIR/init.sh' 
 # update nix
 alias nixup='pushd $NIXDIR; git pull; popd; $NIXDIR/init.sh' 
-alias nixdir='pushd NIXDIR'
+alias nixdir='pushd $NIXDIR'
 
 if [[ $os == 'linux' ]]; then
 	 alias l='\ls --color=auto -tr'
