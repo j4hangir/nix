@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+[[ `pgrep ${0##*/} | wc -l` > 2 ]] && exit 1
+
+if [ ! -f ~/.nix/proxied-wifis ]; then exit 1; fi
+source $NIXDIR/utils/utils.sh
+os=$($NIXDIR/utils/os_detect.sh)
+if [ $os = "mac" ]; then
+  wifi=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk '/ SSID/ {print substr($0, index($0, $2))}'`
+fi
+if [ -z "$wifi" ]; then exit 1; fi
+source $NIXDIR/aliases.zsh
+IFS=$'\n' read -d '' -r -a wifis < ~/.nix/proxied-wifis
+#readarray wifis < ~/.nix/proxied-wifis
+if contains $wifis $wifi; then
+  proxytoggle on
+  echo Proxy enabled for \'$wifi\'
+else
+  proxytoggle off
+  echo Proxy disabled for \'$wifi\'
+fi
+# echo ${wifis[0]}

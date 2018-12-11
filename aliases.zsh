@@ -230,6 +230,9 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
+# sort everything by size
+alias dushs='dush * | sort -h'
+
 alias ack='ack --color'
 
 # install	colordiff package :)
