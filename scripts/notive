@@ -13,6 +13,6 @@ fi
 if [ -z "$event" ]; then event="nix"; fi
 
 msg=$(json_escape)
-json='{"auth":"nixifi3d","msg":'$msg',"event":"'$event'","mode":"html"}'
+json='{"auth":"nixifi3d","msg":'$msg',"event":"'$event'","mode":"html","tone":true}'
 #echo $json
 curl -d "$json" https://notive.j4hangir.com > /dev/null 2>&1
