@@ -10,7 +10,7 @@ if [ ! -z "$1" ]; then
   msg="<b>$msg</b>: <pre>$1</pre>"
 fi
 
-if [ -z "$event" ]; then event="nix"; fi
+if [ -z "$event" ]; then event="host $hostname"; fi
 
 msg=$(json_escape)
 json='{"auth":"nixifi3d","msg":'$msg',"event":"'$event'","mode":"html","tone":true}'

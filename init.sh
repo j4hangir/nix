@@ -3,6 +3,9 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 unsetopt autopushd
 
+# less color and case-insensitive
+export LESS=-Ri
+
 # ignore commands that start with space
 setopt HIST_IGNORE_SPACE
 SPATH=$DIR/scripts
