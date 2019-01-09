@@ -16,6 +16,7 @@ source $DIR/iTerm2-ssh.zsh
 source $DIR/antigen.zsh
 #source $DIR/.zshrc
 
+
 # antigen bundles
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions

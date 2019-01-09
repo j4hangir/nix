@@ -29,6 +29,13 @@ alias nixre='$NIXDIR/init.sh'
 alias nixpu='pushd $NIXDIR; git pull; popd; $NIXDIR/init.sh' 
 alias nixdir='pushd $NIXDIR'
 
+# define dummy `sudo` for distribus. that don't have, e.g. debian
+if ! hash sudo 2>/dev/null; then
+  sudo () {
+    $@
+  }
+fi
+
 if [[ $os == 'linux' ]]; then
 	 alias l='\ls --color=auto -tr'
 	 alias ls='\ls --color=auto -lahtr'
