@@ -26,6 +26,13 @@ elif [ "$os" = "linux" ]; then
   fi
 fi
 
+# define dummy `sudo` for distribus. that don't have, e.g. debian
+if ! hash sudo 2>/dev/null; then
+  sudo () {
+    $@
+  }
+fi
+
 # axel: multi-threaded downloader
 # nload: network load
 # ack: better grep
