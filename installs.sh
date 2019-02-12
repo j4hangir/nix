@@ -41,6 +41,10 @@ fi
 
 packages="tree axel entr ack ack-grep nload htop pigz mosh mobile-shell git tmux zsh vim mlocate p7zip p7zip-plugins nc psmisc sysstat bind-utils net-tools unrar unrar-free fd fzf"
 
-for p in $packages; do
-  $ins install $p -y
-done
+if [ "$ins" = "sudo apt-get" ]; then
+  for p in $packages; do
+    $ins install $p -y
+  done
+else
+ $ins $packages
+fi
