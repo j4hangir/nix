@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 os=`$NIXDIR/utils/os_detect.sh`
 
+# detach all other sessions but this one
+alias takeover="tmux detach -a"
+
 # recursive and verbose
 alias mkdir="mkdir -pv"
 
