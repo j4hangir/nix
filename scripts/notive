@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
+py=`command -v python`
+if [ -z "$py" ]; then py=`command -v python3`; fi
+
 json_escape () {
-    printf '%s' "$msg" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+    printf '%s' "$msg" | $py -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
 }
 event=`cat ~/.nix/.notive > /dev/null 2>&1`
 hostname=$(hostname)
