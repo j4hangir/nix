@@ -39,7 +39,9 @@ fi
 # entr: on file-change reloads command
 # mosh: mobile shell: nearly perfect replacement for SSH
 
-packages="ncat tree axel entr ack ack-grep silversearcher-ag epel-release.noarch the_silver_searcher nload htop pigz mosh mobile-shell git tmux zsh vim mlocate p7zip p7zip-plugins nc psmisc sysstat bind-utils net-tools unrar unrar-free fd fzf"
+packages="ncat tree axel entr ack ack-grep silversearcher-ag epel-release.noarch the_silver_searcher nload htop pigz mosh mobile-shell git tmux zsh vim mlocate p7zip p7zip-plugins nc psmisc sysstat bind-utils net-tools unrar unrar-free fd fzf whois"
+
+echo "Using $ins"
 
 if [ "$ins" = "sudo apt-get" ]; then
   for p in $packages; do
