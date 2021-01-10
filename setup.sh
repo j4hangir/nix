@@ -53,4 +53,5 @@ git submodule update --recursive
 
 source ~/.zshrc
 
-
+# fix comp insecure directories
+compaudit | xargs chmod g-w

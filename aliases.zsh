@@ -318,7 +318,7 @@ nalias () {
 			desc="\\n# $d\\n"; 
 		fi
 		LINE=$desc"alias $alias='$*'"
-		FILE="~/.nix/aliases.zsh"
+		FILE="$HOME/.nix/aliases.zsh"
 		cp $FILE $FILE.bak
 		grep -q "$LINE" "$FILE" || ( echo $alias aliased && awk '!found && /naliased:start/{on=1; found=1} on&&/naliased:end/{print "'$LINE'"; on=0} {print}' $FILE > $FILE.tmp)
 		mv $FILE.tmp $FILE
