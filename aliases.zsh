@@ -328,3 +328,19 @@ nalias () {
 if [ -f $HOME/.nix/aliases.zsh ]; then
   source $HOME/.nix/aliases.zsh
 fi
+
+
+# return if not interactive
+[ -z "$PS1" ] && return
+
+# ls after cd
+function cd {
+    builtin cd "$@" && \ls --color=auto -tr
+}
+function pushd {
+    builtin pushd "$@" && \ls --color=auto -tr
+}
+function popd {
+    builtin popd "$@" && pwd && \ls --color=auto -tr
+}
+
