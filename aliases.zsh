@@ -325,6 +325,6 @@ nalias () {
 		source $FILE
 }
 
-if [ -f ~/.nix/aliases.zsh ]; then
-  source ~/.nix/aliases.zsh
+if [ -f $HOME/.nix/aliases.zsh ]; then
+  source $HOME/.nix/aliases.zsh
 fi
