@@ -329,9 +329,10 @@ if [ -f $HOME/.nix/aliases.zsh ]; then
   source $HOME/.nix/aliases.zsh
 fi
 
-
+return
 # return if not interactive
 [ -z "$PS1" ] && return
+
 
 # ls after cd
 function cd {

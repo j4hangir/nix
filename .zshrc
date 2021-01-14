@@ -1,7 +1,7 @@
 # Autoload screen if we aren't in it.  (Thanks Fjord!)
 #if [[ $STY = '' ]] then screen -xR; fi
 #if [[ $STY = '' ]] then tmux attach-session; fi
-if [ -x "$(command -v tmux)" ] && [ -z "$TMUX" ]; then tmux attach-session || tmux; fi
+# if [ -x "$(command -v tmux)" ] && [ -z "$TMUX" ]; then tmux attach-session || tmux; fi
 #{{{ ZSH Modules
 
 autoload -U compinit promptinit zcalc zsh-mime-setup
@@ -114,3 +114,6 @@ setopt HIST_BEEP # Beep when accessing nonexistent history.
 # zle -N zle-keymap-select
 # export KEYTIMEOUT=1
 export TERM="xterm-256color"
+
+# fix annoying BG color on folders
+LS_COLORS=$LS_COLORS:'ow=30;44:'

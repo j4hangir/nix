@@ -41,8 +41,6 @@ grep -q "$LINE" "$FILE" || ( echo Prepending .vimrc to $FILE && echo -e "$LINE\n
 #else
 #  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 #fi
-echo Installing default packages
-$DIR/installs.sh
 
 echo Installing oh my zsh
 $DIR/install_oh_my_zsh.sh
@@ -55,3 +53,8 @@ source ~/.zshrc
 
 # fix comp insecure directories
 compaudit | xargs chmod g-w
+
+echo Installing default packages
+$DIR/installs.sh
+
+

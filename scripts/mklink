@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+cmd.exe /c "mklink /J "${1//\//\\}" "${2//\//\\}
+
+# Alias: mklink=" . mklink.sh"
+# USAGE: mklink <mylink> <target>
+

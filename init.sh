@@ -10,6 +10,8 @@ export LESS=-Ri
 setopt HIST_IGNORE_SPACE
 SPATH=$DIR/scripts
 [[ ":$PATH:" != *":$SPATH:"* ]] && PATH="$SPATH:${PATH}"
+
+
 source $DIR/envs.sh
 source $DIR/aliases.zsh
 source $DIR/iTerm2-ssh.zsh
