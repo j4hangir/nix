@@ -48,5 +48,5 @@ if [ "$ins" = "sudo apt-get" ]; then
     $ins install $p -y
   done
 else
-  $ins $packages -y
+  $ins install $packages -y
 fi
