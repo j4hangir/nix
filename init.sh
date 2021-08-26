@@ -53,5 +53,5 @@ source $DIR/.zshrc
 #   \/   |_| |_| |_| /_/\_\ |_| |_|   |_|  \___|  \__,_|  (_)  | |
 #                                                             /_/ "
 
-cat $DIR/.banner
+#cat $DIR/.banner
 
