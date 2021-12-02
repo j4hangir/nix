@@ -5,7 +5,7 @@ if [ $# -eq 0 ]
 else
   dir="$@"
 fi
-ret=$(find "$dir" | wc -l)
+ret=$('ls' "$dir" | wc -l)
 # exclude .
-echo `expr $ret - 1`
+#echo `expr $ret - 1`
 
