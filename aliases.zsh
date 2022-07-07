@@ -25,6 +25,10 @@ alias gch="stat --format '%a'"
 # kill process by cmd
 alias ckill="pkill -f "
 
+
+# which terminal we're in
+alias whereami="ps -p $$"
+
 #** Nix specific 
 # reload nix
 alias nixre='$NIXDIR/init.sh' 
