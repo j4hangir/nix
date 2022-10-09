@@ -31,10 +31,10 @@ alias whereami="ps -p $$"
 
 #** Nix specific 
 # reload nix
-alias nixre='$NIXDIR/init.sh' 
+alias nix-reload='$NIXDIR/init.sh' 
 # update nix
-alias nixpu='pushd $NIXDIR; git pull; popd; $NIXDIR/init.sh' 
-alias nixdir='pushd $NIXDIR'
+alias nix-update='pushd $NIXDIR; git pull; popd; $NIXDIR/init.sh' 
+alias nix-cd='pushd $NIXDIR'
 
 # define dummy `sudo` for distribus. that don't have, e.g. debian
 if ! hash sudo 2>/dev/null; then
@@ -64,15 +64,16 @@ cdl () {
 	cd $1 && l
 }
 
-trash () {
-  if [ "$#" -le 0 ]; then
-    echo "trash <files>"
-    return
-  fi
-  if [[ $os == 'mac' ]]; then
-    mv $@ ~/.Trash
-  fi
-}
+
+#trash () {
+#  if [ "$#" -le 0 ]; then
+#    echo "trash <files>"
+#    return
+#  fi
+#  if [[ $os == 'mac' ]]; then
+#    mv $@ ~/.Trash
+#  fi
+#}
 
 opf () {
 	if [[ $os == 'mac' ]]; then
