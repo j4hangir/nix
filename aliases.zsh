@@ -52,6 +52,12 @@ elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
 	 alias ls='\ls -G -lahtr'
 	 alias l.='\ls -Gd .* -Gtr'
 	 alias updatedb='sudo /usr/libexec/locate.updatedb'
+
+   # j4hangir: redefine mdfind and remove UserQueryParser superfluous msgs
+   function mdfind() {
+    /usr/bin/mdfind $@ 2> >(grep --invert-match ' \[UserQueryParser\] ' >&2)
+   }
+
 	 srch() {
 		 mdfind -name $@ 
 	 }
