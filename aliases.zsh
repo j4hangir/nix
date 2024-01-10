@@ -14,6 +14,7 @@ alias .....='cd ../../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 alias hick='history | ack -i'
+#alias history='history | aul'
 alias pu='pushd'
 alias po='popd'
 
@@ -80,6 +81,11 @@ cdl () {
 #    mv $@ ~/.Trash
 #  fi
 #}
+
+
+function find_bundle_name() {
+  mdfind "kMDItemKind == 'Application'" | grep -i $1 | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(pbcopy)
+}
 
 opf () {
 	if [[ $os == 'mac' ]]; then
