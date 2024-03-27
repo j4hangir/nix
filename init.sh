@@ -44,6 +44,9 @@ antigen apply
 #antigen use prezto
 source $DIR/.zshrc
 
+if [ -f ~/.tmux.zsh ]; then
+    source ~/.tmux.zsh
+fi
 
 
 # echo "                _          _    __   _              _       __  
