@@ -28,7 +28,7 @@ alias ckill="pkill -f "
 
 
 # which terminal we're in
-alias whereami="ps -p $$"
+alias whereami="ps -p $$; pwd -P"
 
 #** Nix specific 
 # reload nix
