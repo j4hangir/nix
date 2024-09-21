@@ -14,6 +14,7 @@ alias .....='cd ../../../../'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 alias hick='history | ack -i'
+#alias history='history | aul'
 alias pu='pushd'
 alias po='popd'
 
@@ -52,6 +53,12 @@ elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
 	 alias ls='\ls -G -lahtr'
 	 alias l.='\ls -Gd .* -Gtr'
 	 alias updatedb='sudo /usr/libexec/locate.updatedb'
+
+   # j4hangir: redefine mdfind and remove UserQueryParser superfluous msgs
+   function mdfind() {
+    /usr/bin/mdfind $@ 2> >(grep --invert-match ' \[UserQueryParser\] ' >&2)
+   }
+
 	 srch() {
 		 mdfind -name $@ 
 	 }
@@ -74,6 +81,11 @@ cdl () {
 #    mv $@ ~/.Trash
 #  fi
 #}
+
+
+function find_bundle_name() {
+  mdfind "kMDItemKind == 'Application'" | grep -i $1 | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(pbcopy)
+}
 
 opf () {
 	if [[ $os == 'mac' ]]; then
