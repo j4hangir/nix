@@ -9,6 +9,13 @@ compinit
 promptinit
 zsh-mime-setup
 
+zstyle ':completion:*' rehash true
+if [[ -n "$ZSH_COMPDUMP" && -f "$ZSH_COMPDUMP" ]]; then
+  source "$ZSH_COMPDUMP"
+else
+  compinit
+fi
+
 #}}}
 
 #{{{ Options
