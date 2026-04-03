@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-#find "$@" -printf ' ' | wc -c
-if [ $# -eq 0 ]
-  then dir="."
+if [ $# -eq 0 ]; then
+  dir="."
 else
   dir="$@"
 fi
-ret=$('ls' "$dir" | wc -l)
-# exclude .
-#echo `expr $ret - 1`
-
+ls "$dir" | wc -l

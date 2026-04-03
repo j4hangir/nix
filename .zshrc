@@ -1,13 +1,8 @@
-# Autoload screen if we aren't in it.  (Thanks Fjord!)
-#if [[ $STY = '' ]] then screen -xR; fi
-#if [[ $STY = '' ]] then tmux attach-session; fi
-# if [ -x "$(command -v tmux)" ] && [ -z "$TMUX" ]; then tmux attach-session || tmux; fi
 #{{{ ZSH Modules
 
 autoload -U compinit promptinit zcalc zsh-mime-setup
-compinit
-promptinit
 zsh-mime-setup
+promptinit
 
 zstyle ':completion:*' rehash true
 if [[ -n "$ZSH_COMPDUMP" && -f "$ZSH_COMPDUMP" ]]; then
@@ -46,11 +41,8 @@ setopt PUSHD_SILENT
 # blank pushd goes to home
 setopt PUSHD_TO_HOME
 
-# this will ignore multiple directories for the stack.  Useful?  I dunno.
+# this will ignore multiple directories for the stack.
 setopt PUSHD_IGNORE_DUPS
-
-# 10 second wait if you do something that will delete everything.  I wish I'd had this before...
-# setopt RM_STAR_WAIT
 
 # use magic (this is default, but it can't hurt!)
 setopt ZLE
@@ -58,16 +50,10 @@ setopt ZLE
 # Don't kill background jobs when I logout
 setopt NO_HUP
 
-#GLOBDOTS lets files beginning with a . be matched without explicitly specifying the dot.
+# GLOBDOTS lets files beginning with a . be matched without explicitly specifying the dot.
 setopt globdots
 
-# Use vi key bindings in ZSH
-#setopt VI
-
-# only fools wouldn't do this ;-)
-export EDITOR="vim"
-
-# Do not exit on end-of-file. Require the use of exit or logout instead. However, ten consecutive EOFs will cause the shell to exit anyway, to avoid the shell hanging if its tty goes away. 
+# Do not exit on end-of-file. 10 consecutive EOFs will still exit.
 setopt IGNORE_EOF
 
 # If I could disable Ctrl-s completely I would!
@@ -82,10 +68,9 @@ setopt NO_CLOBBER
 # Case insensitive globbing
 setopt NO_CASE_GLOB
 
-#ZSH_THEME="robbyrussell"
+#}}}
 
-plugins=(git bundler osx rake ruby zsh-syntax-highlighting)
-
+#{{{ History
 
 HISTSIZE=1000000
 SAVEHIST=1000000
@@ -101,28 +86,11 @@ setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
 setopt HIST_IGNORE_SPACE         # Don't record an entry starting with a space.
 setopt HIST_SAVE_NO_DUPS         # Don't write duplicate entries in the history file.
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
-#setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
-setopt HIST_BEEP # Beep when accessing nonexistent history.
+setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
+#}}}
 
-# bindkey -v
-# 
-# bindkey '^P' up-history
-# bindkey '^N' down-history
-# bindkey '^?' backward-delete-char
-# bindkey '^h' backward-delete-char
-# bindkey '^w' backward-kill-word
-# bindkey '^r' history-incremental-search-backward
-# 
-# function zle-line-init zle-keymap-select {
-#       VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
-#           RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/}$(git_custom_status) $EPS1"
-#               zle reset-prompt
-# }
-# 
-# zle -N zle-line-init
-# zle -N zle-keymap-select
-# export KEYTIMEOUT=1
+export EDITOR="vim"
 export TERM="xterm-256color"
 
 # fix annoying BG color on folders

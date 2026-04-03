@@ -11,17 +11,12 @@ alias ..='cd ..'
 alias ...='cd ../../'
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
-alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 alias hick='history | ack -i'
-#alias history='history | aul'
 alias pu='pushd'
 alias po='popd'
 
 alias htop='sudo htop'
-
-# get chmod code
-alias gch="stat --format '%a'"
 
 # kill process by cmd
 alias ckill="pkill -f "
@@ -71,18 +66,6 @@ cdl () {
 	cd "$1" && l
 }
 
-
-#trash () {
-#  if [ "$#" -le 0 ]; then
-#    echo "trash <files>"
-#    return
-#  fi
-#  if [[ $os == 'mac' ]]; then
-#    mv $@ ~/.Trash
-#  fi
-#}
-
-
 function find_bundle_name() {
   mdfind "kMDItemKind == 'Application'" | grep -i "$1" | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(pbcopy)
 }
@@ -115,10 +98,8 @@ getip () {
 	if [ "$#" -le 0 ]; then
 		echo Own IP:
 		curl -w '\n' 'https://api.ipify.org'
-		#curl ifconfig.me
 		return
 	fi
-#	echo $@
 	if [[ $os == 'linux' ]]; then
 		IP=$(getent hosts "$@" | awk '{ print $1 }' | li)
 	elif [[ $os == 'mac' ]]; then
@@ -134,11 +115,8 @@ __cpmvpd () {
 		echo "Illegal number of parameters"
 		return 
 	fi
-#	echo $@
 	"$@"
-	# last arg
 	for last; do true; done
-	#penultimate = "${@:(-2):1}"
 	if [[ -f "$last" ]]; then
 		last=$(dirname "${last}")
 	fi
@@ -216,8 +194,6 @@ proxytoggle() {
       rm "$TOGGLE"
       toggle=0
     fi
-    #echo $usage
-    #return
 	elif [[ $1 == "on" || $1 == "1" ]]; then toggle=1
 	elif [[ $1 == "off" || $1 == "0" ]]; then toggle=0
 	else 
@@ -272,12 +248,9 @@ alias wget='wget -c'
 alias fcount="bash $NIXDIR/utils/count_files.sh"
 alias count="bash $NIXDIR/utils/count_files_and_dirs.sh"
 
-# Axel: default to alternate progress bar
+# Axel: default to alternate progress bar, 10 threads
 alias axel="axel -n 10 -a"
-
-# Download aliases
 alias dl='axel -n 10 -a'
-# wget resume by default
 
 function getchmod {
  if [ "$#" -lt 1 ]; then
@@ -327,7 +300,6 @@ nalias () {
 		if [ "$#" -lt 2 ]; then
 			nalias_usage
 		fi
-		# echo "d: [${d}], non-option arguments: $*"	
 		alias=$1
 		shift
 		desc=""
@@ -344,23 +316,21 @@ nalias () {
 		source "$FILE"
 }
 
+# one-liner utils (previously standalone scripts)
+trim () { echo -e "$1" | awk '{$1=$1};1'; }
+alias ssh-fingerprint='ssh-keygen -l -E md5 -f <(ssh-keyscan localhost 2>/dev/null)'
+mklink () { cmd.exe /c "mklink /J ${1//\//\\} ${2//\//\\}"; }
+adbscrshot () {
+  if [ "$#" -le 0 ]; then
+    adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' | imgcat
+  else
+    adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > "$1"
+  fi
+}
+
 if [ -f "$HOME/.nix/aliases.zsh" ]; then
   source "$HOME/.nix/aliases.zsh"
 fi
 
 return
-# return if not interactive
-[ -z "$PS1" ] && return
-
-
-# ls after cd
-function cd {
-    builtin cd "$@" && \ls --color=auto -tr
-}
-function pushd {
-    builtin pushd "$@" && \ls --color=auto -tr
-}
-function popd {
-    builtin popd "$@" && pwd && \ls --color=auto -tr
-}
 

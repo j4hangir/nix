@@ -77,15 +77,12 @@ All live in `scripts/` and are added to `$PATH` automatically.
 
 | Script | Description |
 |---|---|
-| `trim` | Strip whitespace from strings |
 | `dh` | Delete history entries matching a pattern |
 | `urlencode` | RFC 1738 URL encoding |
-| `notive` | Push notifications via [notive](https://notive.j4hangir.com) |
-| `ssh-fingerprint` | Show SSH key fingerprints |
-| `adbscrshot` | Capture Android screenshots via ADB |
 | `mrtorrent` | Convert magnet URIs to `.torrent` files |
 | `on_wifi_change` | Auto-toggle proxy based on WiFi SSID |
-| `mklink` | Create junction points (Windows/WSL) |
+
+Smaller utilities (`trim`, `ssh-fingerprint`, `mklink`, `adbscrshot`) are inlined as functions in `aliases.zsh`.
 
 ### 🧰 Aliases & Functions
 

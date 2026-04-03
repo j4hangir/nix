@@ -1,2 +1,0 @@
-#!/bin/sh
-ssh-keygen -l -E md5 -f <(ssh-keyscan localhost 2>/dev/null)
