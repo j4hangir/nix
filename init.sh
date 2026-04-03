@@ -8,6 +8,7 @@ SPATH=$DIR/scripts
 source "$DIR/envs.sh"
 source "$DIR/aliases.zsh"
 source "$DIR/iTerm2-ssh.zsh"
+ADOTDIR="$HOME/.antigen"
 source "$DIR/vendor/antigen.zsh"
 
 # antigen bundles
