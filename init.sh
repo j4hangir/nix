@@ -8,7 +8,7 @@ SPATH=$DIR/scripts
 source "$DIR/envs.sh"
 source "$DIR/aliases.zsh"
 source "$DIR/iTerm2-ssh.zsh"
-source "$DIR/antigen.zsh"
+source "$DIR/vendor/antigen.zsh"
 
 # antigen bundles
 antigen bundle zsh-users/zsh-syntax-highlighting

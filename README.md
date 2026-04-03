@@ -30,12 +30,14 @@ cd ~/nix
 ./setup.sh
 ```
 
-That's it. `setup.sh` will:
+That's it. `setup.sh` handles everything in one run:
 
-- 🔗 Symlink configs into `~/.zshrc` and `~/.vimrc`
-- 📦 Install [oh-my-zsh](https://ohmyz.sh) and shell plugins via [Antigen](https://github.com/zsh-users/antigen)
+- 📦 Install packages (Homebrew / dnf / apt — with correct package names per distro)
+- 🐚 Install [oh-my-zsh](https://ohmyz.sh) + shell plugins via [Antigen](https://github.com/zsh-users/antigen)
+- 🔗 Wire up `~/.zshrc` and `~/.vimrc`
 - 🧩 Pull git submodules (powerlevel9k theme)
-- 🍺 Install packages via Homebrew / apt / yum
+
+> Tested on macOS, AlmaLinux, Ubuntu. Installs EPEL automatically on RHEL-based distros.
 
 ## 🔄 Daily Use
 
@@ -143,13 +145,19 @@ takeover                       — detach all other tmux sessions
 
 ```
 ~/.zshrc
-  └── init.sh                 ← entrypoint
-        ├── envs.sh           ← exports, history options
-        ├── aliases.zsh       ← aliases & functions
-        ├── iTerm2-ssh.zsh    ← iTerm2 tab colors for SSH
-        ├── antigen.zsh       ← plugin manager (vendored)
-        ├── antigen bundles   ← 19 plugins loaded
-        └── .zshrc            ← zsh options, completions, keybindings
+  └── init.sh                    ← entrypoint
+        ├── envs.sh              ← exports ($NIXDIR, $EDITOR, $LESS)
+        ├── aliases.zsh          ← aliases & functions
+        ├── iTerm2-ssh.zsh       ← iTerm2 tab colors for SSH
+        ├── vendor/antigen.zsh   ← plugin manager (vendored)
+        ├── antigen bundles      ← 19 plugins loaded
+        └── .zshrc               ← zsh options, completions, keybindings
+
+scripts/       → added to $PATH (standalone executables)
+utils/         → helper scripts sourced by other files
+tmux/          → dvorak.tmux.conf (sourced by .tmux.conf)
+vendor/        → third-party files (antigen)
+themes/        → powerlevel9k (git submodule)
 ```
 
 OS detection happens in `utils/os_detect.sh` and is stored in `$os`. Many aliases and functions branch on it for platform-specific behavior.
@@ -160,7 +168,7 @@ OS detection happens in `utils/os_detect.sh` and is stored in `$os`. Many aliase
 |---|:---:|:---:|:---:|
 | Core shell | ✅ | ✅ | ✅ |
 | Aliases | ✅ | ✅ | ✅ |
-| Package install | 🍺 Homebrew | 📦 apt / yum | — |
+| Package install | 🍺 Homebrew | 📦 dnf / apt | — |
 | Spotlight search (`srch`) | ✅ | — | — |
 | Proxy toggle | ✅ | — | — |
 
