@@ -22,6 +22,14 @@
 
 ---
 
+## Prerequisites
+
+Install these before running `setup.sh`:
+
+```
+zsh  git  curl  vim  tmux
+```
+
 ## ⚡ Quickstart
 
 ```bash
@@ -32,12 +40,9 @@ cd ~/nix
 
 That's it. `setup.sh` handles everything in one run:
 
-- 📦 Install packages (Homebrew / dnf / apt — with correct package names per distro)
 - 🐚 Install [oh-my-zsh](https://ohmyz.sh) + shell plugins via [Antigen](https://github.com/zsh-users/antigen)
 - 🔗 Wire up `~/.zshrc` and `~/.vimrc`
 - 🧩 Pull git submodules (powerlevel9k theme)
-
-> Tested on macOS, AlmaLinux, Ubuntu. Installs EPEL automatically on RHEL-based distros.
 
 ## 🔄 Daily Use
 
@@ -168,7 +173,6 @@ OS detection happens in `utils/os_detect.sh` and is stored in `$os`. Many aliase
 |---|:---:|:---:|:---:|
 | Core shell | ✅ | ✅ | ✅ |
 | Aliases | ✅ | ✅ | ✅ |
-| Package install | 🍺 Homebrew | 📦 dnf / apt | — |
 | Spotlight search (`srch`) | ✅ | — | — |
 | Proxy toggle | ✅ | — | — |
 
