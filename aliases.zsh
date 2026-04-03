@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-os=`$NIXDIR/utils/os_detect.sh`
+os=$("$NIXDIR/utils/os_detect.sh")
 
 # detach all other sessions but this one
 alias takeover="tmux detach -a"
@@ -40,7 +40,7 @@ alias nix-cd='pushd $NIXDIR'
 # define dummy `sudo` for distribus. that don't have, e.g. debian
 if ! hash sudo 2>/dev/null; then
   sudo () {
-    $@
+    "$@"
   }
 fi
 
@@ -56,11 +56,11 @@ elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
 
    # j4hangir: redefine mdfind and remove UserQueryParser superfluous msgs
    function mdfind() {
-    /usr/bin/mdfind $@ 2> >(grep --invert-match ' \[UserQueryParser\] ' >&2)
+    /usr/bin/mdfind "$@" 2> >(grep --invert-match ' \[UserQueryParser\] ' >&2)
    }
 
 	 srch() {
-		 mdfind -name $@ 
+		 mdfind -name "$@"
 	 }
 fi
 
@@ -68,7 +68,7 @@ fi
 alias pf='ps aux | grep --color=auto -i'
 # cd and ls
 cdl () {
-	cd $1 && l
+	cd "$1" && l
 }
 
 
@@ -84,19 +84,19 @@ cdl () {
 
 
 function find_bundle_name() {
-  mdfind "kMDItemKind == 'Application'" | grep -i $1 | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(pbcopy)
+  mdfind "kMDItemKind == 'Application'" | grep -i "$1" | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(pbcopy)
 }
 
 opf () {
 	if [[ $os == 'mac' ]]; then
-		c="netstat -antvp tcp"
+		local -a c=(netstat -antvp tcp)
 	else
-		c="netstat -tulpn"
+		local -a c=(netstat -tulpn)
 	fi
 	if [ "$#" -le 0 ]; then
-		eval "$c"
+		"${c[@]}"
 	else
-		eval "$c | ack $@"
+		"${c[@]}" | ack "$@"
 	fi
 }
 
@@ -107,8 +107,8 @@ mkpu () {
 		return
 	fi
 	for last; do true; done
-	mkdir -pv $@
-	pushd $last
+	mkdir -pv "$@"
+	pushd "$last"
 }
 
 getip () {
@@ -120,12 +120,12 @@ getip () {
 	fi
 #	echo $@
 	if [[ $os == 'linux' ]]; then
-		IP=$(getent hosts $@ | awk '{ print $1 }' | li) 
+		IP=$(getent hosts "$@" | awk '{ print $1 }' | li)
 	elif [[ $os == 'mac' ]]; then
-		IP=$(host $@ | awk '{ print $4 }') 
+		IP=$(host "$@" | awk '{ print $4 }')
 	fi
-	echo $IP
-	$(echo $IP | pbcopy > /dev/null 2>&1) 
+	echo "$IP"
+	echo "$IP" | pbcopy > /dev/null 2>&1
 }
 
 # cp & mv pushd
@@ -135,15 +135,15 @@ __cpmvpd () {
 		return 
 	fi
 #	echo $@
-	$@
+	"$@"
 	# last arg
 	for last; do true; done
 	#penultimate = "${@:(-2):1}"
-	if [[ -f $last ]]; then
-		last=$(dirname "${last}") 
-	fi 
-	if [[ -d $last ]]; then
-		pushd $last
+	if [[ -f "$last" ]]; then
+		last=$(dirname "${last}")
+	fi
+	if [[ -d "$last" ]]; then
+		pushd "$last"
 	else
 		echo "'$last' is not a directory!"
 	fi
@@ -151,12 +151,12 @@ __cpmvpd () {
 
 # cp & pushd
 cpd () {
-	__cpmvpd "cp" $@
+	__cpmvpd "cp" "$@"
 }
 
 # mv $ pushd
 mvpu () {
-	__cpmvpd "mv" $@
+	__cpmvpd "mv" "$@"
 }
 
 # tar file, compress
@@ -165,8 +165,8 @@ gz () {
 		echo usage gz FILE
 		return
 	fi
-	echo Compressing $1.gz
-	pigz < $1 > $1.gz
+	echo "Compressing $1.gz"
+	pigz < "$1" > "$1.gz"
 }
 
 # Disk usage
@@ -175,7 +175,7 @@ dush () {
 	if [ "$#" -lt 1 ]; then
 		du -csh *
 	else
-		du -chs $@
+		du -chs "$@"
 	fi
 }
 
@@ -209,11 +209,11 @@ proxytoggle() {
 	if [ "$#" -lt 1 ]; then
     TOGGLE=$NIXDIR/.proxytoggle
 
-    if [ ! -e $TOGGLE ]; then
-      touch $TOGGLE
+    if [ ! -e "$TOGGLE" ]; then
+      touch "$TOGGLE"
       toggle=1
     else
-      rm $TOGGLE
+      rm "$TOGGLE"
       toggle=0
     fi
     #echo $usage
@@ -249,7 +249,7 @@ proxytoggle() {
 
 # Run relative script with absolute path
 .a () {
-	echo -n `pwd`/$@
+	echo -n "$(pwd)/$@"
 }
 
 ## Colorize the grep command output for ease of use (good for log files)##
@@ -284,8 +284,8 @@ function getchmod {
 	 echo Usage: getchmod {FILE}
 	 return
  fi
- if [[ $os == 'mac' ]]; then stat -f "%OLp" $@;
- else stat -c %a $@
+ if [[ $os == 'mac' ]]; then stat -f "%OLp" "$@";
+ else stat -c %a "$@"
  fi
 }
 
@@ -336,14 +336,16 @@ nalias () {
 		fi
 		LINE=$desc"alias $alias='$*'"
 		FILE="$HOME/.nix/aliases.zsh"
-		cp $FILE $FILE.bak
-		grep -q "$LINE" "$FILE" || ( echo $alias aliased && awk '!found && /naliased:start/{on=1; found=1} on&&/naliased:end/{print "'$LINE'"; on=0} {print}' $FILE > $FILE.tmp)
-		mv $FILE.tmp $FILE
-		source $FILE
+		cp "$FILE" "$FILE.bak"
+		local tmpfile
+		tmpfile=$(mktemp)
+		grep -q "$LINE" "$FILE" || ( echo "$alias aliased" && awk -v line="$LINE" '!found && /naliased:start/{on=1; found=1} on&&/naliased:end/{print line; on=0} {print}' "$FILE" > "$tmpfile")
+		mv "$tmpfile" "$FILE"
+		source "$FILE"
 }
 
-if [ -f $HOME/.nix/aliases.zsh ]; then
-  source $HOME/.nix/aliases.zsh
+if [ -f "$HOME/.nix/aliases.zsh" ]; then
+  source "$HOME/.nix/aliases.zsh"
 fi
 
 return

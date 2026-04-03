@@ -9,7 +9,7 @@ if [ "$os" = "mac" ]; then
       #if [[ $? != 0 ]] ; then
       #  yum install 
       # Install homebrew
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       
       # this makes pbcopy work in tmux: https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard
       # taken from https://evertpot.com/osx-tmux-vim-copy-paste-clipboard/
@@ -29,7 +29,7 @@ fi
 # define dummy `sudo` for distribus. that don't have, e.g. debian
 if ! hash sudo 2>/dev/null; then
   sudo () {
-    $@
+    "$@"
   }
 fi
 

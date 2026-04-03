@@ -3,5 +3,5 @@
 if [ "$#" -le 0 ]; then
   adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' | imgcat
 else   
-  adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $@
+  adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > "$1"
 fi

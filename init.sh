@@ -12,11 +12,11 @@ SPATH=$DIR/scripts
 [[ ":$PATH:" != *":$SPATH:"* ]] && PATH="$SPATH:${PATH}"
 
 
-source $DIR/envs.sh
-source $DIR/aliases.zsh
-source $DIR/iTerm2-ssh.zsh
-source $DIR/antigen.zsh
-#source $DIR/.zshrc
+source "$DIR/envs.sh"
+source "$DIR/aliases.zsh"
+source "$DIR/iTerm2-ssh.zsh"
+source "$DIR/antigen.zsh"
+#source "$DIR/.zshrc"
 
 
 # antigen bundles
@@ -42,7 +42,7 @@ antigen bundle bundler
 antigen apply
 #antigen use oh-my-zsh
 #antigen use prezto
-source $DIR/.zshrc
+source "$DIR/.zshrc"
 
 
 # echo "                _          _    __   _              _       __  
