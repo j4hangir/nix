@@ -39,20 +39,11 @@ FILE=~/.vimrc
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending .vimrc to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
 
 # ---------------------------------------------------------------------------
-# 3. Submodules
+# 3. Trust repo dir even if owned by another user (shared /nix installs)
 # ---------------------------------------------------------------------------
 
-# trust the repo dir even if owned by another user (shared /nix installs)
 git config --global --get-all safe.directory | grep -qxF "$DIR" \
   || git config --global --add safe.directory "$DIR"
-
-if [ -w "$DIR" ]; then
-  echo "Cloning submodules..."
-  git -C "$DIR" submodule update --init --recursive
-elif [ ! -d "$DIR/themes/powerlevel9k/.git" ]; then
-  echo "Warning: submodules not initialised and $DIR is not writable."
-  echo "Ask the repo owner to run: git -C $DIR submodule update --init --recursive"
-fi
 
 # ---------------------------------------------------------------------------
 # 4. Fix insecure completion dirs (suppress errors on first run)

@@ -42,7 +42,6 @@ That's it. `setup.sh` handles everything in one run:
 
 - 🐚 Install [oh-my-zsh](https://ohmyz.sh) + shell plugins via [Antigen](https://github.com/zsh-users/antigen)
 - 🔗 Wire up `~/.zshrc` and `~/.vimrc`
-- 🧩 Pull git submodules (powerlevel9k theme)
 
 ## 🔄 Daily Use
 
@@ -60,7 +59,6 @@ That's it. `setup.sh` handles everything in one run:
 - **Auto CD** — type a directory name to `cd` into it
 - **Smart completion** — case-insensitive globbing, rehash on every completion
 - **Plugins** — syntax highlighting, autosuggestions, git, npm, pip, ruby, and more
-- **Powerlevel9k** theme (git submodule)
 
 ### ✏️ Vim
 
@@ -162,7 +160,6 @@ scripts/       → added to $PATH (standalone executables)
 utils/         → helper scripts sourced by other files
 tmux/          → dvorak.tmux.conf (sourced by .tmux.conf)
 vendor/        → third-party files (antigen)
-themes/        → powerlevel9k (git submodule)
 ```
 
 OS detection happens in `utils/os_detect.sh` and is stored in `$os`. Many aliases and functions branch on it for platform-specific behavior.
