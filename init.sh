@@ -6,7 +6,6 @@ SPATH=$DIR/scripts
 [[ ":$PATH:" != *":$SPATH:"* ]] && PATH="$SPATH:${PATH}"
 
 source "$DIR/envs.sh"
-source "$DIR/aliases.zsh"
 source "$DIR/iTerm2-ssh.zsh"
 ADOTDIR="$HOME/.antigen"
 ANTIGEN_AUTO_CONFIG=false
@@ -34,4 +33,5 @@ antigen bundle capistrano
 antigen bundle bundler
 antigen apply
 
+source "$DIR/aliases.zsh"
 source "$DIR/.zshrc"
