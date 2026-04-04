@@ -38,6 +38,11 @@ LINE="so $DIR/.vimrc"
 FILE=~/.vimrc
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending .vimrc to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
 
+# Prepend .tmux.conf (idempotent)
+LINE="source $DIR/.tmux.conf"
+FILE=~/.tmux.conf
+grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending .tmux.conf to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
+
 # ---------------------------------------------------------------------------
 # 3. Trust repo dir even if owned by another user (shared /nix installs)
 # ---------------------------------------------------------------------------
@@ -53,5 +58,24 @@ if command -v zsh &>/dev/null; then
   zsh -c 'autoload -U compinit && compinit' 2>/dev/null || true
   zsh -c 'autoload -U compaudit && compaudit | xargs chmod g-w 2>/dev/null' 2>/dev/null || true
 fi
+
+# ---------------------------------------------------------------------------
+# 5. Install/update TPM (tmux plugin manager) — pinned
+# ---------------------------------------------------------------------------
+
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+TPM_TAG="v3.1.0"
+if [ ! -d "$TPM_DIR" ]; then
+  echo "Installing TPM $TPM_TAG..."
+  git clone --branch "$TPM_TAG" --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+elif [ "$(git -C "$TPM_DIR" describe --tags 2>/dev/null)" != "$TPM_TAG" ]; then
+  echo "Updating TPM to $TPM_TAG..."
+  git -C "$TPM_DIR" fetch --tags
+  git -C "$TPM_DIR" checkout "$TPM_TAG" 2>/dev/null
+fi
+
+# Install/update tmux plugins (non-interactive, idempotent)
+"$TPM_DIR/bin/install_plugins" 2>/dev/null || true
+"$TPM_DIR/bin/update_plugins" all 2>/dev/null || true
 
 echo "Done. Start a new zsh session or run: source ~/.zshrc"
