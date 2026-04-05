@@ -2,7 +2,7 @@
 # Copy stdin to system clipboard via OSC 52, wrapped in DCS for tmux passthrough
 data=$(base64 | tr -d "\n")
 if [ -n "$TMUX" ]; then
-  printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$data"
+  printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$data" > /dev/tty
 else
-  printf '\033]52;c;%s\a' "$data"
+  printf '\033]52;c;%s\a' "$data" > /dev/tty
 fi
