@@ -1,7 +1,6 @@
 #!/bin/sh
 current=$(tmux display-message -p '#{window_index}')
 lines=$(tmux list-windows -F '#{window_index}: #{window_name}')
-# grep -n gives 1-based line number; line 1 is at the bottom in fzf
 pos=$(echo "$lines" | grep -n "^${current}:" | cut -d: -f1)
 ups=$(( ${pos:-1} - 1 ))
 moves=""
