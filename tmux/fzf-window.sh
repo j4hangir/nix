@@ -11,6 +11,7 @@ while [ "$i" -lt "$ups" ]; do
 done
 moves="${moves#+}"
 bind="one:accept"
-[ -n "$moves" ] && bind="${bind},start:${moves}"
+[ -n "$moves" ] && bind="${bind},load:${moves}"
 window=$(echo "$lines" | fzf --tmux --no-sort --bind "$bind")
 [ -n "$window" ] && tmux select-window -t "${window%%:*}"
+exit 0
