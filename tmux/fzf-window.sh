@@ -9,5 +9,5 @@ while [ "$i" -lt "${pos:-1}" ]; do
   i=$((i + 1))
 done
 moves="${moves#+}"
-window=$(echo "$lines" | fzf-tmux -p --no-sort --select-1 ${moves:+--bind "start:${moves}"})
+window=$(echo "$lines" | fzf-tmux -p --no-sort --bind "one:accept" ${moves:+--bind "start:${moves}"})
 [ -n "$window" ] && tmux select-window -t "${window%%:*}"
