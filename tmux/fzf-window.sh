@@ -1,10 +1,9 @@
 #!/bin/sh
 current=$(tmux display-message -p '#{window_index}')
 lines=$(tmux list-windows -F '#{window_index}: #{window_name}')
-total=$(echo "$lines" | wc -l | tr -d ' ')
+# grep -n gives 1-based line number; line 1 is at the bottom in fzf
 pos=$(echo "$lines" | grep -n "^${current}:" | cut -d: -f1)
-# fzf bottom-up: cursor starts at line 1 (bottom). target is (total - pos) ups from bottom.
-ups=$((total - ${pos:-1}))
+ups=$(( ${pos:-1} - 1 ))
 moves=""
 i=0
 while [ "$i" -lt "$ups" ]; do
