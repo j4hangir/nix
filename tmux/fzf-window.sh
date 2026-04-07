@@ -14,5 +14,5 @@ done
 moves="${moves#+}"
 bind="one:accept"
 [ -n "$moves" ] && bind="${bind},start:${moves}"
-window=$(echo "$lines" | fzf-tmux -p --no-sort --bind "$bind")
+window=$(echo "$lines" | fzf --tmux popup --no-sort --bind "$bind")
 [ -n "$window" ] && tmux select-window -t "${window%%:*}"
