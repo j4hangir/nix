@@ -1,6 +1,4 @@
 #!/bin/sh
-exec 2>/tmp/fzf-window-debug.log
-set -x
 current=$(tmux display-message -p '#{window_index}')
 lines=$(tmux list-windows -F '#{window_index}: #{window_name}')
 pos=$(echo "$lines" | grep -n "^${current}:" | cut -d: -f1)
@@ -14,5 +12,5 @@ done
 moves="${moves#+}"
 bind="one:accept"
 [ -n "$moves" ] && bind="${bind},start:${moves}"
-window=$(echo "$lines" | fzf --tmux popup --no-sort --bind "$bind")
+window=$(echo "$lines" | fzf --tmux --no-sort --bind "$bind")
 [ -n "$window" ] && tmux select-window -t "${window%%:*}"
