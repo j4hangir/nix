@@ -1,4 +1,6 @@
 #!/bin/sh
+exec 2>/tmp/fzf-window-debug.log
+set -x
 current=$(tmux display-message -p '#{window_index}')
 lines=$(tmux list-windows -F '#{window_index}: #{window_name}')
 pos=$(echo "$lines" | grep -n "^${current}:" | cut -d: -f1)
