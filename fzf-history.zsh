@@ -24,8 +24,10 @@ fzf-execute-command() {
   selected=$(fc -rl 1 | awk '{$1=""; cmd=substr($0,2)} !seen[cmd]++ {print cmd}' | fzf \
     --height 40% --border --layout=reverse-list \
     --scheme=history --tiebreak=index \
+    --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \
-    --bind "tab:down,shift-tab:up,ctrl-e:toggle-search,right:accept+execute-silent(echo right > $action_file),enter:accept+execute-silent(echo enter > $action_file)" \
+    --bind "tab:down,shift-tab:up,right:accept+execute-silent(echo right > $action_file),enter:accept+execute-silent(echo enter > $action_file)" \
+    --bind 'ctrl-e:transform-query(fzf-toggle-exact {q})+transform-prompt([[ {fzf:prompt} == EXACT* ]] && echo "> " || echo "EXACT > ")' \
     --expect=ctrl-c)
 
   local exit_status=$?
@@ -58,3 +60,7 @@ fzf-execute-command() {
 
 zle -N fzf-execute-command
 bindkey '^R' fzf-execute-command
+
+# Remap fzf's Alt-C (cd widget) to Alt-D
+bindkey -rM emacs '\ec'
+bindkey '\ed' fzf-cd-widget

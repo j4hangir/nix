@@ -1,0 +1,7 @@
+#!/bin/sh
+# Toggles ' prefix on fzf query for exact-match mode
+q="$1"
+case "$q" in
+  \'*) printf '%s' "${q#?}" ;;
+  *)   printf "'%s" "$q" ;;
+esac
