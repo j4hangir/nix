@@ -93,5 +93,8 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 export EDITOR="vim"
 export TERM="xterm-256color"
 
+# Alt+Backspace: delete word back (fix for tmux/mosh)
+bindkey '^[^?' backward-kill-word
+
 # fix annoying BG color on folders
 LS_COLORS=$LS_COLORS:'ow=30;44:'
