@@ -65,4 +65,4 @@ bindkey '^R' fzf-execute-command
 
 # Remap fzf's Alt-C (cd widget) to Alt-D
 bindkey -rM emacs '\ec'
-bindkey '\ed' fzf-cd-widget
+bindkey '∂' fzf-cd-widget
