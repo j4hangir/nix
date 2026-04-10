@@ -108,7 +108,7 @@ pu / po                  — pushd / popd
 ```
 pf <query>               — ps aux | grep
 opf [filter]             — open ports (netstat)
-hick <query>             — search history with ack
+hick <query>             — search history with rg
 srch <name>              — mdfind wrapper (macOS)
 ```
 </details>
@@ -154,11 +154,12 @@ takeover                       — detach all other tmux sessions
         ├── iTerm2-ssh.zsh       ← iTerm2 tab colors for SSH
         ├── vendor/antigen.zsh   ← plugin manager (vendored)
         ├── antigen bundles      ← 19 plugins loaded
-        └── .zshrc               ← zsh options, completions, keybindings
+        └── configs/zshrc        ← zsh options, completions, keybindings
 
+configs/       → tool configs (zshrc, vimrc, tmux.conf, screenrc, ripgreprc, …)
 scripts/       → added to $PATH (standalone executables)
 utils/         → helper scripts sourced by other files
-tmux/          → dvorak.tmux.conf (sourced by .tmux.conf)
+tmux/          → dvorak.tmux.conf (sourced by configs/tmux.conf)
 vendor/        → third-party files (antigen)
 ```
 

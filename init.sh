@@ -34,5 +34,5 @@ antigen bundle capistrano
 antigen bundle bundler
 antigen apply
 
-source "$DIR/.zshrc"
+source "$DIR/configs/zshrc"
 source "$DIR/fzf-history.zsh"

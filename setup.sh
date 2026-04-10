@@ -33,15 +33,15 @@ LINE="source $DIR/init.sh"
 FILE=~/.zshrc
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Appending init.sh to $FILE" && echo "$LINE" >> "$FILE" )
 
-# Prepend .vimrc (idempotent)
-LINE="so $DIR/.vimrc"
+# Prepend vimrc (idempotent)
+LINE="so $DIR/configs/vimrc"
 FILE=~/.vimrc
-grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending .vimrc to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
+grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending vimrc to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
 
-# Prepend .tmux.conf (idempotent)
-LINE="source $DIR/.tmux.conf"
+# Prepend tmux.conf (idempotent)
+LINE="source $DIR/configs/tmux.conf"
 FILE=~/.tmux.conf
-grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending .tmux.conf to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
+grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending tmux.conf to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
 
 # ---------------------------------------------------------------------------
 # 3. Trust repo dir even if owned by another user (shared /nix installs)

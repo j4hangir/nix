@@ -1,0 +1,20 @@
+# tame noisy output
+--max-columns=200
+--max-columns-preview
+
+# search behavior
+--smart-case
+--hidden
+
+# always-skip junk
+--glob=!.git
+--glob=!node_modules
+--glob=!*.lock
+--glob=!*-lock.json
+--glob=!dist
+--glob=!build
+--glob=!.next
+--glob=!.venv
+--glob=!__pycache__
+--glob=!*.min.js
+--glob=!*.min.css

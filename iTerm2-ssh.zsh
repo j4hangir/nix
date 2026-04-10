@@ -21,8 +21,8 @@ tab-reset() {
 # Change the color of the tab when using SSH
 # reset the color after the connection closes
 color-ssh() {
-  source ~/.nix/iTerm2-ssh.zsh 
-  # copy the following lines into .iTerm2-ssh.zsh
+  source ~/.nix/iTerm2-ssh.zsh
+  # see configs/iTerm2-ssh.zsh.example for what to put in ~/.nix/iTerm2-ssh.zsh
   \ssh "$@"
 }
 

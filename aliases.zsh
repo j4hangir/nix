@@ -12,7 +12,7 @@ alias ...='cd ../../'
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias .5='cd ../../../../..'
-alias hick='history | ack -i'
+alias hick='history | rg -i'
 alias pu='pushd'
 alias po='popd'
 
@@ -79,7 +79,7 @@ opf () {
 	if [ "$#" -le 0 ]; then
 		"${c[@]}"
 	else
-		"${c[@]}" | ack "$@"
+		"${c[@]}" | rg "$@"
 	fi
 }
 
@@ -236,8 +236,6 @@ alias fgrep='fgrep --color=auto'
 # sort everything by size
 alias dushs='dush * | sort -h'
 
-alias ack='ack --color'
-
 # install	colordiff package :)
 alias diff='colordiff'
 
@@ -267,10 +265,10 @@ function substitute {
  echo "Usage: substitue FROM_STRING TO_STRING [OPTION]..."
  echo
  echo "Replace all occurances of FROM_STRING (a sed-compatible regular"
- echo "expression) with TO_STRING in all files for which ack-grep matches"
+ echo "expression) with TO_STRING in all files for which rg matches"
  echo "FROM_STRING."
  echo
- echo "Any additional options are passed directly to ack-grep (e.g.,"
+ echo "Any additional options are passed directly to rg (e.g.,"
  echo " --type=html would only run the substitution on html files)."
  return 1
  fi
@@ -278,7 +276,7 @@ function substitute {
  FROM_STRING=${1/\//\\/}
  TO_STRING=${2/\//\\/}
  shift 2
- ack -l --print0 "$@" "$FROM_STRING" | xargs -0 -n 1 sed -i '' -e"s/$FROM_STRING/$TO_STRING/g"
+ rg -l --null "$@" "$FROM_STRING" | xargs -0 -n 1 sed -i '' -e"s/$FROM_STRING/$TO_STRING/g"
 }
 
 # create new alias with optional description
