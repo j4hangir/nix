@@ -11,6 +11,8 @@
 #
 # Requires: fzf
 
+export FZF_CTRL_T_COMMAND='fd --type f --hidden --exclude .git'
+
 source <(fzf --zsh)
 
 fzf-execute-command() {
