@@ -33,6 +33,15 @@ LINE="source $DIR/init.sh"
 FILE=~/.zshrc
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Appending init.sh to $FILE" && echo "$LINE" >> "$FILE" )
 
+# Migrate stale pre-configs/ paths from older setup.sh versions
+for pair in "$HOME/.vimrc:so $DIR/.vimrc" "$HOME/.tmux.conf:source $DIR/.tmux.conf"; do
+  FILE="${pair%%:*}"; OLD="${pair#*:}"
+  if [ -f "$FILE" ] && grep -qF "$OLD" "$FILE"; then
+    echo "Removing stale '$OLD' from $FILE"
+    grep -vF "$OLD" "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+  fi
+done
+
 # Prepend vimrc (idempotent)
 LINE="so $DIR/configs/vimrc"
 FILE=~/.vimrc
