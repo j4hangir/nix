@@ -1,8 +1,6 @@
 #!/usr/bin/env zsh
 os=$("$NIXDIR/utils/os_detect.sh")
 
-alias cb='osc52copy'
-
 # detach all other sessions but this one
 alias takeover="tmux detach -a"
 
