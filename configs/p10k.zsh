@@ -185,8 +185,8 @@
   # Show user@host only when connected via SSH (empty expansion hides it locally).
   typeset -g POWERLEVEL9K_CONTEXT_PREFIX=''
   typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION=
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE='%B%n@%m%b'
-  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_CONTENT_EXPANSION='%n@%m'
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE='%B%n@%M%b'
+  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_CONTENT_EXPANSION='%n@%M'
 
   ##############################################################################
   # Transient prompt — collapse previous prompts to a minimal form
