@@ -150,7 +150,9 @@ gz () {
 # Disk usage
 # disk usage, total, human and summarized
 dush () {
-	if [ "$#" -lt 1 ]; then
+	if command -v dust &>/dev/null; then
+		dust "${@:-.}"
+	elif [ "$#" -lt 1 ]; then
 		du -csh *
 	else
 		du -chs "$@"
@@ -233,8 +235,6 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-# sort everything by size
-alias dushs='dush * | sort -h'
 
 # install	colordiff package :)
 alias diff='colordiff'

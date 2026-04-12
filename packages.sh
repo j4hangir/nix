@@ -7,7 +7,7 @@ set -eo pipefail
 # Detects the system package manager and installs only what's missing.
 # Supported: brew (macOS/Linux), dnf (Fedora/RHEL), apt (Debian/Ubuntu), pkg (FreeBSD)
 
-TOOLS="neovim bat fd ripgrep fzf zoxide delta tmux"
+TOOLS="neovim bat fd ripgrep fzf zoxide delta tmux btop dust"
 
 # binary name that proves a tool is installed
 bin_for() {
@@ -30,6 +30,9 @@ pkg_for() {
     apt-get:delta)       echo git-delta ;;
     pkg:fd)              echo fd-find ;;
     pkg:delta)           echo git-delta ;;
+    dnf:dust)            echo du-dust ;;
+    apt-get:dust)        echo du-dust ;;
+    pkg:dust)            echo du-dust ;;
     *)                   echo "$tool" ;;
   esac
 }
