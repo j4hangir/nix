@@ -39,5 +39,5 @@ o.clipboard = "unnamedplus"
 
 o.backspace = "indent,eol,start"
 o.matchpairs:append("<:>")
-o.listchars = { tab = "\u25b8 ", eol = "\u00ac" }
+o.listchars = { tab = "▸ ", eol = "¬" }
 o.whichwrap:append("<,>,h,l,[,]")
