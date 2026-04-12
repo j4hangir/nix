@@ -32,7 +32,7 @@ pkg_for() {
     pkg:delta)           echo git-delta ;;
     apt-get:dust)        echo du-dust ;;
     pkg:dust)            echo du-dust ;;
-    dnf:dust)            return 1 ;;   # not in EPEL — github fallback
+    dnf:dust)            return 1 ;;   # not in EPEL — install manually
     *)                   echo "$tool" ;;
   esac
 }
@@ -56,29 +56,6 @@ install_with() {
   esac
 }
 
-# github release download for tools missing from system repos
-# installs to ~/.local/bin
-gh_release_install() {
-  local tool=$1 arch
-  arch=$(uname -m)
-  case $tool in
-    dust)
-      local url tarball
-      url=$(curl -fsSL https://api.github.com/repos/bootandy/dust/releases/latest \
-        | grep -o '"browser_download_url": *"[^"]*'"$arch"'-unknown-linux-gnu\.tar\.gz"' \
-        | head -1 | cut -d'"' -f4) || return 1
-      [ -z "$url" ] && return 1
-      tarball=$(mktemp)
-      curl -fsSL "$url" -o "$tarball" || { rm -f "$tarball"; return 1; }
-      mkdir -p ~/.local/bin
-      tar xzf "$tarball" -C ~/.local/bin --strip-components=1 --wildcards '*/dust' 2>/dev/null \
-        || tar xzf "$tarball" -C ~/.local/bin --strip-components=1 'dust' 2>/dev/null \
-        || { rm -f "$tarball"; return 1; }
-      rm -f "$tarball"
-      ;;
-    *) return 1 ;;
-  esac
-}
 
 # ---------------------------------------------------------------------------
 
@@ -146,17 +123,6 @@ install_with "$PM" $to_install || {
   installed="${installed# }"
 }
 
-# github binary fallback for tools missing from system repos
-for tool in $TOOLS; do
-  bin=$(bin_for "$tool")
-  if ! command -v "$bin" &>/dev/null; then
-    echo "Installing $tool from GitHub release..."
-    if gh_release_install "$tool"; then
-      installed="$installed $tool"
-    fi
-  fi
-done
-installed="${installed# }"
 
 # ---------------------------------------------------------------------------
 # Summary
