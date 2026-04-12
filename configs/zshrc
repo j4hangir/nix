@@ -93,6 +93,8 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 export EDITOR="vim"
 export TERM="xterm-256color"
 
-# fix annoying BG color on folders
+# colors
+command -v dircolors &>/dev/null && eval "$(dircolors -b)"
 LS_COLORS=$LS_COLORS:'ow=30;44:'
+export LS_COLORS
 
