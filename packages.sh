@@ -30,9 +30,9 @@ pkg_for() {
     apt-get:delta)       echo git-delta ;;
     pkg:fd)              echo fd-find ;;
     pkg:delta)           echo git-delta ;;
-    dnf:dust)            echo du-dust ;;
     apt-get:dust)        echo du-dust ;;
     pkg:dust)            echo du-dust ;;
+    dnf:dust)            return 1 ;;   # not in EPEL — github fallback
     *)                   echo "$tool" ;;
   esac
 }
@@ -100,8 +100,7 @@ for tool in $TOOLS; do
   bin=$(bin_for "$tool")
   if command -v "$bin" &>/dev/null; then
     skipped="$skipped $tool"
-  else
-    pkg=$(pkg_for "$tool" "$PM")
+  elif pkg=$(pkg_for "$tool" "$PM"); then
     to_install="$to_install $pkg"
     installed="$installed $tool"
   fi
