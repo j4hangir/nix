@@ -1,8 +1,6 @@
 #{{{ ZSH Modules
 
-autoload -U compinit promptinit zcalc zsh-mime-setup
-zsh-mime-setup
-promptinit
+autoload -U compinit zcalc
 
 zstyle ':completion:*' rehash true
 if [[ -n "$ZSH_COMPDUMP" && -f "$ZSH_COMPDUMP" ]]; then
