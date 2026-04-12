@@ -90,8 +90,7 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 #}}}
 
-export EDITOR="vim"
-export TERM="xterm-256color"
+# TERM is set by the terminal emulator / tmux — don't override it here.
 
 # colors
 command -v dircolors &>/dev/null && eval "$(dircolors -b)"
