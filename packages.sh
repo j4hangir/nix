@@ -56,6 +56,14 @@ install_with() {
   esac
 }
 
+# cargo package name (only for tools that may be missing from system repos)
+cargo_for() {
+  case $1 in
+    dust) echo du-dust ;;
+    *)    return 1 ;;
+  esac
+}
+
 # ---------------------------------------------------------------------------
 
 PM=$(detect_pm)
@@ -122,6 +130,19 @@ install_with "$PM" $to_install || {
   done
   installed="${installed# }"
 }
+
+# cargo fallback for tools missing from system repos
+if command -v cargo &>/dev/null; then
+  for tool in $TOOLS; do
+    bin=$(bin_for "$tool")
+    if ! command -v "$bin" &>/dev/null; then
+      cpkg=$(cargo_for "$tool" 2>/dev/null) || continue
+      echo "Installing $tool via cargo ($cpkg)..."
+      cargo install "$cpkg" && installed="$installed $tool"
+    fi
+  done
+  installed="${installed# }"
+fi
 
 # ---------------------------------------------------------------------------
 # Summary
