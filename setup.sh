@@ -53,14 +53,38 @@ FILE=~/.tmux.conf
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending tmux.conf to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
 
 # ---------------------------------------------------------------------------
-# 3. Trust repo dir even if owned by another user (shared /nix installs)
+# 3. Wire gitconfig (idempotent — uses git include, won't touch user.name/email)
+# ---------------------------------------------------------------------------
+
+GITCONFIG_PATH="$DIR/configs/gitconfig"
+CURRENT_INCLUDE=$(git config --global --get include.path 2>/dev/null || true)
+if [ "$CURRENT_INCLUDE" != "$GITCONFIG_PATH" ]; then
+  git config --global include.path "$GITCONFIG_PATH"
+  echo "Wired gitconfig include → $GITCONFIG_PATH"
+fi
+
+# ---------------------------------------------------------------------------
+# 4. Symlink neovim config (idempotent)
+# ---------------------------------------------------------------------------
+
+NVIM_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
+if [ ! -e "$NVIM_DIR" ]; then
+  mkdir -p "$(dirname "$NVIM_DIR")"
+  ln -sf "$DIR/configs/nvim" "$NVIM_DIR"
+  echo "Linked neovim config → $NVIM_DIR"
+elif [ "$(readlink "$NVIM_DIR" 2>/dev/null)" != "$DIR/configs/nvim" ]; then
+  echo "Warning: $NVIM_DIR already exists and is not our symlink. Skipping nvim config."
+fi
+
+# ---------------------------------------------------------------------------
+# 5. Trust repo dir even if owned by another user (shared /nix installs)
 # ---------------------------------------------------------------------------
 
 git config --global --get-all safe.directory | grep -qxF "$DIR" \
   || git config --global --add safe.directory "$DIR"
 
 # ---------------------------------------------------------------------------
-# 4. Fix insecure completion dirs (suppress errors on first run)
+# 6. Fix insecure completion dirs (suppress errors on first run)
 # ---------------------------------------------------------------------------
 
 if command -v zsh &>/dev/null; then
@@ -69,7 +93,29 @@ if command -v zsh &>/dev/null; then
 fi
 
 # ---------------------------------------------------------------------------
-# 5. Install/update TPM (tmux plugin manager) — pinned
+# 7. Clone zsh plugins (no plugin manager — just git clone + source)
+# ---------------------------------------------------------------------------
+
+ZSH_PLUGINS="$HOME/.zsh/plugins"
+mkdir -p "$ZSH_PLUGINS"
+
+clone_plugin() {
+  local repo=$1 dir="$ZSH_PLUGINS/$2"
+  if [ ! -d "$dir" ]; then
+    echo "Cloning $repo..."
+    git clone --depth 1 "https://github.com/$repo.git" "$dir"
+  else
+    echo "Updating $2..."
+    git -C "$dir" pull --ff-only 2>/dev/null || true
+  fi
+}
+
+clone_plugin zsh-users/zsh-syntax-highlighting zsh-syntax-highlighting
+clone_plugin zsh-users/zsh-autosuggestions zsh-autosuggestions
+clone_plugin romkatv/powerlevel10k powerlevel10k
+
+# ---------------------------------------------------------------------------
+# 8. Install/update TPM (tmux plugin manager) — pinned
 # ---------------------------------------------------------------------------
 
 TPM_DIR="$HOME/.tmux/plugins/tpm"

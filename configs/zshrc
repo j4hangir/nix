@@ -95,3 +95,4 @@ export TERM="xterm-256color"
 
 # fix annoying BG color on folders
 LS_COLORS=$LS_COLORS:'ow=30;44:'
+

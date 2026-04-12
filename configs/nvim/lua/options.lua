@@ -1,0 +1,43 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+local o = vim.opt
+
+o.tabstop = 2
+o.shiftwidth = 2
+o.softtabstop = 2
+o.expandtab = true
+o.smartindent = true
+o.shiftround = false
+
+o.ignorecase = true
+o.smartcase = true
+
+o.scrolloff = 3
+o.encoding = "utf-8"
+o.hidden = true
+o.wrap = true
+o.textwidth = 79
+o.formatoptions = "cqrn1"
+
+o.ruler = true
+o.laststatus = 2
+o.showmode = true
+o.showcmd = true
+
+o.hlsearch = true
+o.incsearch = true
+
+o.modelines = 0
+o.number = false
+
+o.visualbell = true
+o.termguicolors = true
+o.background = "dark"
+
+o.clipboard = "unnamedplus"
+
+o.backspace = "indent,eol,start"
+o.matchpairs:append("<:>")
+o.listchars = { tab = "\u25b8 ", eol = "\u00ac" }
+o.whichwrap:append("<,>,h,l,[,]")
