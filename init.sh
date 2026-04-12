@@ -2,10 +2,13 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 
 # ---------------------------------------------------------------------------
-# p10k instant prompt — must be first (before any console output)
+# p10k instant prompt — should be near the top of .zshrc, before init.sh.
+# Guard: only activate here if not already running (i.e. .zshrc didn't do it).
 # ---------------------------------------------------------------------------
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ -z "${_p10k_instant_prompt_sourced-}" ]]; then
+  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+  fi
 fi
 
 # ---------------------------------------------------------------------------
