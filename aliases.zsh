@@ -3,6 +3,8 @@ os=$("$NIXDIR/utils/os_detect.sh")
 
 # detach all other sessions but this one
 alias takeover="tmux detach -a"
+# kill tmux session, drop to bare shell (see configs/default_tmux.zshrc)
+alias jailfree='touch /tmp/.tmux_jailfree_$(id -u) && tmux kill-session'
 
 # recursive and verbose
 alias mkdir="mkdir -pv"
