@@ -42,9 +42,6 @@ setopt PUSHD_TO_HOME
 # this will ignore multiple directories for the stack.
 setopt PUSHD_IGNORE_DUPS
 
-# use magic (this is default, but it can't hurt!)
-setopt ZLE
-
 # Don't kill background jobs when I logout
 setopt NO_HUP
 
