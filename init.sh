@@ -117,5 +117,15 @@ source "$NIXDIR/utils/clipboard.zsh"
 # flag mosh sessions so tmux set-titles-string can detect them
 [[ -n "$TMUX" && -n "$MOSH_CONNECTION" ]] && tmux set -g @mosh 1 2>/dev/null
 
+# inside tmux: override termsupport — show dir on idle, dir+command on exec
+if [[ -n "$TMUX" ]]; then
+  add-zsh-hook -d precmd omz_termsupport_precmd 2>/dev/null
+  add-zsh-hook -d preexec omz_termsupport_preexec 2>/dev/null
+  _nix_title_precmd() { print -Pn "\ek%~\e\\"; }
+  _nix_title_preexec() { print -Pn "\ek%~ ${2}\e\\"; }
+  add-zsh-hook precmd _nix_title_precmd
+  add-zsh-hook preexec _nix_title_preexec
+fi
+
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
 unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS
