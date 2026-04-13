@@ -117,11 +117,12 @@ source "$NIXDIR/utils/clipboard.zsh"
 # set user once to avoid #(whoami) shell spawns in set-titles-string
 [[ -n "$TMUX" ]] && tmux set -g @user "$(whoami)" 2>/dev/null
 
-# flag mosh sessions so tmux set-titles-string can detect them
-if [[ -n "$MOSH_CONNECTION" ]]; then
-  [[ -z "$TMUX" ]] && tmux set-environment -g MOSH_CONNECTION "$MOSH_CONNECTION" 2>/dev/null
-  tmux set -g @mosh 1 2>/dev/null
+# detect mosh by parent process and propagate into tmux
+if [[ -z "$TMUX" && $(ps -o comm= -p $PPID 2>/dev/null) == mosh-server ]]; then
+  export NIX_MOSH=1
+  tmux set-environment -g NIX_MOSH 1 2>/dev/null
 fi
+[[ -n "$NIX_MOSH" ]] && tmux set -g @mosh 1 2>/dev/null
 
 # inside tmux: override termsupport — show dir on idle, dir+command on exec
 if [[ -n "$TMUX" ]]; then
