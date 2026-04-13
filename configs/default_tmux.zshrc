@@ -6,7 +6,7 @@
 
 if [[ -z "$TMUX" && -n "$SSH_CONNECTION" && -t 0 ]]; then
   rm -f /tmp/.tmux_jailbreak_$(id -u)
-  tmux new-session -A -s main
+  tmux new-session -A -s master
   [[ -f /tmp/.tmux_jailbreak_$(id -u) ]] && rm -f /tmp/.tmux_jailbreak_$(id -u) || exit
 fi
 
