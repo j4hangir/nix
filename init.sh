@@ -124,11 +124,6 @@ if [[ -z "$TMUX" && $(ps -o comm= -p $PPID 2>/dev/null) == mosh-server ]]; then
 fi
 [[ -n "$NIX_MOSH" ]] && tmux set -g @mosh 1 2>/dev/null
 
-# inside tmux: override termsupport — show dir on idle, dir+command on exec
-if [[ -n "$TMUX" ]]; then
-  add-zsh-hook -d precmd omz_termsupport_precmd 2>/dev/null
-  add-zsh-hook -d preexec omz_termsupport_preexec 2>/dev/null
-fi
 
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
 unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS
