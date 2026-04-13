@@ -37,10 +37,18 @@ o.termguicolors = true
 o.background = "dark"
 
 o.clipboard = "unnamedplus"
+vim.g.clipboard = {
+  name = "cb",
+  copy = { ["+"] = "cb", ["*"] = "cb" },
+  paste = { ["+"] = "cbp", ["*"] = "cbp" },
+  cache_enabled = 0,
+}
 
 o.backspace = "indent,eol,start"
 o.matchpairs:append("<:>")
 o.listchars = { tab = "▸ ", eol = "¬" }
 o.whichwrap:append("<,>,h,l,[,]")
 
-o.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50"
+o.guicursor = "n-v-c:block-blinkon0,i-ci-ve:ver25-blinkon0,r-cr:hor20-blinkon0,o:hor50-blinkon0"
+o.guifont = "JetBrains Mono:h16"
+o.linespace = 2

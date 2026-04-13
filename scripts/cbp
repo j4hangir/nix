@@ -1,0 +1,14 @@
+#!/bin/sh
+# Cross-platform paste from clipboard (clipboard → stdout)
+if [ "$(uname)" = "Darwin" ]; then
+  pbpaste
+elif command -v wl-paste >/dev/null 2>&1; then
+  wl-paste
+elif command -v xclip >/dev/null 2>&1; then
+  xclip -selection clipboard -o
+elif command -v xsel >/dev/null 2>&1; then
+  xsel --clipboard --output
+else
+  echo "cbp: no paste backend available" >&2
+  exit 1
+fi
