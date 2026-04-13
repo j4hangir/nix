@@ -11,6 +11,7 @@ return {
       { "<leader>r", group = "Refactor" },
       { "<leader>c", group = "Code" },
       { "g", group = "Go to / Git" },
+      { "<leader>o", group = "Organize" },
     })
   end,
 }

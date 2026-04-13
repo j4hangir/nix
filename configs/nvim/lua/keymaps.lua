@@ -1,5 +1,8 @@
 local map = vim.keymap.set
 
+-- Leader fallthrough: prevent j from moving cursor when leader times out
+map("n", "j", "<Nop>")
+
 -- Dvorak core movement (n, v, o so operators compose: de, ct, yh, etc.)
 map({ "n", "v", "o" }, "u", "gk", { desc = "Up" })
 map({ "n", "v", "o" }, "e", "gj", { desc = "Down" })
@@ -101,6 +104,59 @@ map("n", "r", function()
     vim.notify("No runner for filetype: " .. ft, vim.log.levels.WARN)
   end
 end, { desc = "Run current file" })
+
+-- Navigation (PyCharm keymap)
+map("n", "<A-f>", "<cmd>Telescope find_files<cr>", { desc = "Go to file" })
+map("n", "<A-s>", "<cmd>Telescope lsp_workspace_symbols<cr>", { desc = "Go to symbol" })
+map("n", "<A-c>", function()
+  require("telescope.builtin").lsp_workspace_symbols({ symbols = { "class", "struct" } })
+end, { desc = "Go to class" })
+map("n", "<C-A-e>", "<cmd>Telescope grep_string<cr>", { desc = "Search everywhere" })
+
+-- Move lines (PyCharm Shift+Alt+Up/Down)
+map("n", "<S-A-Up>", ":m .-2<CR>==", { desc = "Move line up", silent = true })
+map("n", "<S-A-Down>", ":m .+1<CR>==", { desc = "Move line down", silent = true })
+map("v", "<S-A-Up>", ":m '<-2<CR>gv=gv", { desc = "Move selection up", silent = true })
+map("v", "<S-A-Down>", ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
+
+-- Close buffer (PyCharm Alt+w)
+map("n", "<A-w>", "<cmd>bd<cr>", { desc = "Close buffer" })
+
+-- Method navigation (PyCharm Ctrl+p/n)
+map("n", "<C-p>", "[m", { desc = "Previous method" })
+map("n", "<C-n>", "]m", { desc = "Next method" })
+
+-- Flash + go to definition (PyCharm AceDeclarationAction)
+map("n", "<leader><space>", function()
+  require("flash").jump({
+    action = function(match, state)
+      state:hide()
+      vim.api.nvim_win_set_cursor(0, { match.pos[1], match.pos[2] })
+      vim.lsp.buf.definition()
+    end,
+  })
+end, { desc = "Flash → definition" })
+
+-- Select to code block end (PyCharm EditorCodeBlockEndWithSelection)
+map("n", "vib", "V}", { desc = "Select to block end" })
+
+-- Diagnostic float (PyCharm ShowErrorDescription)
+map("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
+map("n", "<A-e>", vim.diagnostic.open_float, { desc = "Show diagnostic" })
+
+-- Revert hunk (PyCharm Vcs.RollbackChangedLines)
+map("n", "<A-z>", function() require("gitsigns").reset_hunk() end, { desc = "Revert hunk" })
+
+-- Format buffer (PyCharm ReformatCode)
+map("n", "<leader>u", function() vim.lsp.buf.format({ async = true }) end, { desc = "Format buffer" })
+
+-- Organize imports (PyCharm OptimizeImports)
+map("n", "<leader>oi", function()
+  vim.lsp.buf.code_action({
+    context = { only = { "source.organizeImports" } },
+    apply = true,
+  })
+end, { desc = "Organize imports" })
 
 -- Misc
 map("n", "<A-m>", "/^if __name__ == '__main__'<CR>", { desc = "Find __main__" })

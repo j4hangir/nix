@@ -3,6 +3,14 @@ return {
   event = { "BufReadPre", "BufNewFile" },
   dependencies = { "hrsh7th/cmp-nvim-lsp" },
   config = function()
+    vim.diagnostic.config({
+      virtual_text = false,
+      signs = true,
+      underline = true,
+      update_in_insert = false,
+      float = { border = "rounded", source = true },
+    })
+
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     local on_attach = function(_, bufnr)
@@ -25,7 +33,31 @@ return {
           },
         },
       },
-      pyright = { cmd_name = "pyright-langserver" },
+      pyright = {
+        cmd_name = "pyright-langserver",
+        on_init = function(client)
+          local root = client.config.root_dir
+          if not root then return end
+          for _, venv in ipairs({ ".venv", "venv", ".env", "env" }) do
+            local python = root .. "/" .. venv .. "/bin/python"
+            if vim.uv.fs_stat(python) then
+              client.config.settings.python.pythonPath = python
+              client:notify("workspace/didChangeConfiguration", {
+                settings = client.config.settings,
+              })
+              return
+            end
+          end
+        end,
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+            },
+          },
+        },
+      },
       ts_ls = { cmd_name = "typescript-language-server" },
       gopls = { cmd_name = "gopls" },
       rust_analyzer = { cmd_name = "rust-analyzer" },
@@ -35,6 +67,7 @@ return {
       if vim.fn.executable(cfg.cmd_name) == 1 then
         vim.lsp.config(name, {
           on_attach = on_attach,
+          on_init = cfg.on_init,
           capabilities = capabilities,
           settings = cfg.settings,
         })
