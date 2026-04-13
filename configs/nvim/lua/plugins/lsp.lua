@@ -3,7 +3,6 @@ return {
   event = { "BufReadPre", "BufNewFile" },
   dependencies = { "hrsh7th/cmp-nvim-lsp" },
   config = function()
-    local lspconfig = require("lspconfig")
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     local on_attach = function(_, bufnr)
@@ -32,13 +31,14 @@ return {
       rust_analyzer = { cmd_name = "rust-analyzer" },
     }
 
-    for server, cfg in pairs(servers) do
+    for name, cfg in pairs(servers) do
       if vim.fn.executable(cfg.cmd_name) == 1 then
-        lspconfig[server].setup({
+        vim.lsp.config(name, {
           on_attach = on_attach,
           capabilities = capabilities,
           settings = cfg.settings,
         })
+        vim.lsp.enable(name)
       end
     end
   end,
