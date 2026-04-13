@@ -7,7 +7,10 @@ return {
     wk.setup(opts)
     wk.add({
       { "<leader>f", group = "Find" },
-      { "<leader>l", group = "LSP" },
+      { "<leader>h", group = "Git hunks" },
+      { "<leader>r", group = "Refactor" },
+      { "<leader>c", group = "Code" },
+      { "g", group = "Go to / Git" },
     })
   end,
 }

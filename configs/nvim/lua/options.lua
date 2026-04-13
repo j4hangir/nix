@@ -1,5 +1,6 @@
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.mapleader = "j"
+vim.g.maplocalleader = "j"
+vim.opt.timeoutlen = 300
 
 local o = vim.opt
 

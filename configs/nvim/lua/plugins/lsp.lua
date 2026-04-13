@@ -10,9 +10,8 @@ return {
       local m = function(mode, lhs, rhs, desc)
         vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
       end
-      m("n", "gd", vim.lsp.buf.definition, "Go to definition")
+      -- m (definition) and q (hover) are global in keymaps.lua
       m("n", "gr", vim.lsp.buf.references, "References")
-      m("n", "K", vim.lsp.buf.hover, "Hover")
       m("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
       m("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
     end
