@@ -129,7 +129,7 @@ if [[ -n "$TMUX" ]]; then
   _nix_title_preexec() {
     local dir=${(%):-%~}
     print -n "\ek${1[(w)1]}\e\\"   # window name = just command
-    print -n "\e]2;${dir} ❯ ${1}\a" # pane title = dir ❯ cmd args
+    print -n "\e]2;${dir} | ${1}\a" # pane title = dir | cmd args
   }
   add-zsh-hook precmd _nix_title_precmd
   add-zsh-hook preexec _nix_title_preexec
