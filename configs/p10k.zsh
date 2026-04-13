@@ -19,8 +19,8 @@
   ##############################################################################
   # Instant prompt
   ##############################################################################
-  # 'verbose' prints a warning if anything outputs before instant prompt.
-  typeset -g POWERLEVEL9K_INSTANT_PROMPT=verbose
+  # 'quiet' suppresses warnings about output before instant prompt.
+  typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
   ##############################################################################
   # Core / style
