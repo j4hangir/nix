@@ -115,10 +115,7 @@ source "$NIXDIR/utils/clipboard.zsh"
 [[ -f "$DIR/configs/p10k.zsh" ]] && source "$DIR/configs/p10k.zsh"
 
 # flag mosh sessions so tmux set-titles-string can detect them
-if [[ -n "$MOSH_CONNECTION" ]]; then
-  [[ -z "$TMUX" ]] && tmux set-environment -g MOSH_CONNECTION "$MOSH_CONNECTION" 2>/dev/null
-  tmux set -g @mosh 1 2>/dev/null
-fi
+[[ -n "$TMUX" && -n "$MOSH_CONNECTION" ]] && tmux set -g @mosh 1 2>/dev/null
 
 # inside tmux: override termsupport — show dir on idle, dir+command on exec
 if [[ -n "$TMUX" ]]; then
