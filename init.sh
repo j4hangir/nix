@@ -124,12 +124,9 @@ if [[ -z "$TMUX" && $(ps -o comm= -p $PPID 2>/dev/null) == mosh-server ]]; then
 fi
 [[ -n "$NIX_MOSH" ]] && tmux set -g @mosh 1 2>/dev/null
 
-# replace omz precmd (shows directories) with one that just resets to shell name
-if [[ -n "$TMUX" ]]; then
-  add-zsh-hook -d precmd omz_termsupport_precmd 2>/dev/null
-  _nix_title_reset() { printf '\ek%s\e\\' "${ZSH_NAME:-zsh}"; }
-  add-zsh-hook precmd _nix_title_reset
-fi
+# let tmux's automatic-rename track the foreground process natively
+# DISABLE_AUTO_TITLE stops omz escape sequences from overriding it
+[[ -n "$TMUX" ]] && DISABLE_AUTO_TITLE=true
 
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
 unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS
