@@ -42,3 +42,5 @@ o.backspace = "indent,eol,start"
 o.matchpairs:append("<:>")
 o.listchars = { tab = "▸ ", eol = "¬" }
 o.whichwrap:append("<,>,h,l,[,]")
+
+o.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50"
