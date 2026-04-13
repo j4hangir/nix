@@ -159,7 +159,7 @@ takeover                       — detach all other tmux sessions
 configs/       → tool configs (zshrc, vimrc, tmux.conf, screenrc, ripgreprc, …)
 scripts/       → added to $PATH (standalone executables)
 utils/         → helper scripts sourced by other files
-tmux/          → tmux helpers (fzf-window.sh, etc.)
+tmux/          → dvorak.tmux.conf (sourced by configs/tmux.conf)
 vendor/        → third-party files (antigen)
 ```
 
