@@ -122,7 +122,7 @@ if [[ -n "$TMUX" ]]; then
   add-zsh-hook -d precmd omz_termsupport_precmd 2>/dev/null
   add-zsh-hook -d preexec omz_termsupport_preexec 2>/dev/null
   _nix_title_precmd() { print -Pn "\ek%~\e\\"; }
-  _nix_title_preexec() { print -Pn "\ek%~ ${2}\e\\"; }
+  _nix_title_preexec() { print -Pn "\ek%~ > ${2}\e\\"; }
   add-zsh-hook precmd _nix_title_precmd
   add-zsh-hook preexec _nix_title_preexec
 fi
