@@ -121,18 +121,6 @@ source "$NIXDIR/utils/clipboard.zsh"
 if [[ -n "$TMUX" ]]; then
   add-zsh-hook -d precmd omz_termsupport_precmd 2>/dev/null
   add-zsh-hook -d preexec omz_termsupport_preexec 2>/dev/null
-  _nix_title_precmd() {
-    local dir=${(%):-%~}
-    print -n "\ek${dir}\e\\"       # window name (#W) — tab
-    print -n "\e]2;${dir}\a"       # pane title (#T) — title bar
-  }
-  _nix_title_preexec() {
-    local dir=${(%):-%~}
-    print -n "\ek${1[(w)1]}\e\\"   # window name = just command
-    print -n "\e]2;${dir} | ${1}\a" # pane title = dir | cmd args
-  }
-  add-zsh-hook precmd _nix_title_precmd
-  add-zsh-hook preexec _nix_title_preexec
 fi
 
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
