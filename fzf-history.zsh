@@ -11,7 +11,10 @@
 #
 # Requires: fzf
 
-source <(fzf --zsh)
+# fzf --zsh requires 0.48+; older versions hang waiting on stdin
+if fzf --zsh &>/dev/null; then
+  source <(fzf --zsh)
+fi
 
 fzf-execute-command() {
   local selected
