@@ -124,8 +124,8 @@ if [[ -z "$TMUX" && $(ps -o comm= -p $PPID 2>/dev/null) == mosh-server ]]; then
 fi
 [[ -n "$NIX_MOSH" ]] && tmux set -g @mosh 1 2>/dev/null
 
-# let tmux's automatic-rename track the foreground process natively
-# DISABLE_AUTO_TITLE stops omz escape sequences from overriding it
+# terminal title: use full hostname, let tmux automatic-rename handle tabs
+ZSH_THEME_TERM_TITLE_IDLE="%n@%M:%~"
 [[ -n "$TMUX" ]] && DISABLE_AUTO_TITLE=true
 
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
