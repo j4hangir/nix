@@ -1,3 +1,4 @@
 .DS_Store
 .bak
 init.sh.zwc
+configs/nvim/lazy-lock.json
