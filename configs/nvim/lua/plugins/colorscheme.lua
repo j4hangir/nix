@@ -26,5 +26,9 @@ return {
       end,
     })
     vim.cmd.colorscheme("material")
+
+    -- Highlight function calls (like setup(), parse_requirements()) in blue
+    vim.api.nvim_set_hl(0, "@function.call", { fg = "#82aaff" })
+    vim.api.nvim_set_hl(0, "@function.call.python", { fg = "#82aaff" })
   end,
 }
