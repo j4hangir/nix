@@ -114,5 +114,8 @@ source "$NIXDIR/utils/clipboard.zsh"
 # ---------------------------------------------------------------------------
 [[ -f "$DIR/configs/p10k.zsh" ]] && source "$DIR/configs/p10k.zsh"
 
+# flag mosh sessions so tmux set-titles-string can detect them
+[[ -n "$TMUX" && -n "$MOSH_CONNECTION" ]] && tmux set -g @mosh 1 2>/dev/null
+
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
 unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS

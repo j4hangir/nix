@@ -50,5 +50,8 @@ export SAM_CLI_TELEMETRY=0
 export AZURE_CORE_COLLECT_TELEMETRY=0
 export POWERSHELL_TELEMETRY_OPTOUT=1
 
+# suppress mosh's own [mosh] title prefix — we build our own in tmux
+export MOSH_TITLE_NOPREFIX=1
+
 # macOS-specific
 [[ "$(uname)" == "Darwin" ]] && export HOMEBREW_NO_AUTO_UPDATE=1
