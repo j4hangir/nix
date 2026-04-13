@@ -33,6 +33,19 @@ LINE="source $DIR/init.sh"
 FILE=~/.zshrc
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Appending init.sh to $FILE" && echo "$LINE" >> "$FILE" )
 
+# Wire default_tmux.zshrc into /etc/zprofile (system-wide, runs before .zshrc)
+if [ "$(id -u)" = "0" ]; then
+  LINE="source $DIR/configs/default_tmux.zshrc"
+  FILE=/etc/zprofile
+  if ! grep -qF "$LINE" "$FILE" 2>/dev/null; then
+    read -p "Add tmux auto-attach to $FILE? [y/N] " ans
+    if [ "$ans" = "y" ] || [ "$ans" = "Y" ]; then
+      echo "$LINE" >> "$FILE"
+      echo "Wired default_tmux.zshrc into $FILE"
+    fi
+  fi
+fi
+
 # Migrate stale pre-configs/ paths from older setup.sh versions
 for pair in "$HOME/.vimrc:so $DIR/.vimrc" "$HOME/.tmux.conf:source $DIR/.tmux.conf"; do
   FILE="${pair%%:*}"; OLD="${pair#*:}"
@@ -77,14 +90,31 @@ elif [ "$(readlink "$NVIM_DIR" 2>/dev/null)" != "$DIR/configs/nvim" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 5. Trust repo dir even if owned by another user (shared /nix installs)
+# 5. Symlink bundled treesitter parsers into user runtimepath
+# ---------------------------------------------------------------------------
+# Neovim searches {runtimepath}/parser/ but some installs (e.g. from-source
+# to /usr/local) place .so files in /usr/local/lib/nvim/parser/ which isn't
+# in the default runtimepath.  Symlink them so nvim can find them.
+
+NVIM_BUNDLED_PARSERS="/usr/local/lib/nvim/parser"
+NVIM_USER_PARSERS="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/parser"
+if [ -d "$NVIM_BUNDLED_PARSERS" ]; then
+  mkdir -p "$NVIM_USER_PARSERS"
+  for so in "$NVIM_BUNDLED_PARSERS"/*.so; do
+    [ -e "$so" ] || continue
+    ln -sf "$so" "$NVIM_USER_PARSERS/"
+  done
+fi
+
+# ---------------------------------------------------------------------------
+# 6. Trust repo dir even if owned by another user (shared /nix installs)
 # ---------------------------------------------------------------------------
 
 git config --global --get-all safe.directory | grep -qxF "$DIR" \
   || git config --global --add safe.directory "$DIR"
 
 # ---------------------------------------------------------------------------
-# 6. Fix insecure completion dirs (suppress errors on first run)
+# 7. Fix insecure completion dirs (suppress errors on first run)
 # ---------------------------------------------------------------------------
 
 if command -v zsh &>/dev/null; then
@@ -93,7 +123,7 @@ if command -v zsh &>/dev/null; then
 fi
 
 # ---------------------------------------------------------------------------
-# 7. Clone zsh plugins (no plugin manager — just git clone + source)
+# 8. Clone zsh plugins (no plugin manager — just git clone + source)
 # ---------------------------------------------------------------------------
 
 ZSH_PLUGINS="$HOME/.zsh/plugins"
@@ -115,7 +145,7 @@ clone_plugin zsh-users/zsh-autosuggestions zsh-autosuggestions
 clone_plugin romkatv/powerlevel10k powerlevel10k
 
 # ---------------------------------------------------------------------------
-# 8. Install/update TPM (tmux plugin manager) — pinned
+# 9. Install/update TPM (tmux plugin manager) — pinned
 # ---------------------------------------------------------------------------
 
 TPM_DIR="$HOME/.tmux/plugins/tpm"
