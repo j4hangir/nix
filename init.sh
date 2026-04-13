@@ -114,6 +114,9 @@ source "$NIXDIR/utils/clipboard.zsh"
 # ---------------------------------------------------------------------------
 [[ -f "$DIR/configs/p10k.zsh" ]] && source "$DIR/configs/p10k.zsh"
 
+# set user once to avoid #(whoami) shell spawns in set-titles-string
+[[ -n "$TMUX" ]] && tmux set -g @user "$(whoami)" 2>/dev/null
+
 # flag mosh sessions so tmux set-titles-string can detect them
 [[ -n "$TMUX" && -n "$MOSH_CONNECTION" ]] && tmux set -g @mosh 1 2>/dev/null
 
