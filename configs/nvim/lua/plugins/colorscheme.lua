@@ -17,6 +17,13 @@ return {
         "telescope",
         "which-key",
       },
+      custom_colors = function(colors)
+        colors.editor.bg = "#000000"
+        colors.editor.bg_alt = "#030303"
+        colors.backgrounds.sidebars = "#000000"
+        colors.backgrounds.floating_windows = "#050505"
+        colors.backgrounds.cursor_line = "#0a0a0a"
+      end,
     })
     vim.cmd.colorscheme("material")
   end,
