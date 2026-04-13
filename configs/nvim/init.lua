@@ -10,4 +10,16 @@ vim.opt.rtp:prepend(lazypath)
 
 require("options")
 require("keymaps")
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+  install = { missing = true },
+  change_detection = { notify = false },
+})
+
+-- Auto-close lazy UI after first-time install
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazyInstall",
+  once = true,
+  callback = function()
+    vim.cmd.close()
+  end,
+})
