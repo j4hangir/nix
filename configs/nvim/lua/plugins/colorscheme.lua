@@ -18,11 +18,11 @@ return {
         "which-key",
       },
       custom_colors = function(colors)
-        colors.editor.bg = "#000000"
-        colors.editor.bg_alt = "#030303"
-        colors.backgrounds.sidebars = "#000000"
-        colors.backgrounds.floating_windows = "#050505"
-        colors.backgrounds.cursor_line = "#0a0a0a"
+        colors.editor.bg = "#121212"
+        colors.editor.bg_alt = "#0a0a0a"
+        colors.backgrounds.sidebars = "#0e0e0e"
+        colors.backgrounds.floating_windows = "#161616"
+        colors.backgrounds.cursor_line = "#1a1a1a"
       end,
     })
     vim.cmd.colorscheme("material")
