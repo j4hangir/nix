@@ -128,5 +128,8 @@ fi
 ZSH_THEME_TERM_TITLE_IDLE="%n@%M:%~"
 [[ -n "$TMUX" ]] && DISABLE_AUTO_TITLE=true
 
+# tmux jailbreak: drop to bare shell without disconnecting SSH
+alias jailfree='touch /tmp/.tmux_jailfree_$(id -u) && tmux kill-session'
+
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
 unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS

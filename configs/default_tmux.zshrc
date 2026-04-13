@@ -10,4 +10,3 @@ if [[ -z "$TMUX" && -n "$SSH_CONNECTION" && -t 0 ]]; then
   [[ -f /tmp/.tmux_jailfree_$(id -u) ]] && rm -f /tmp/.tmux_jailfree_$(id -u) || exit
 fi
 
-alias jailfree='touch /tmp/.tmux_jailfree_$(id -u) && tmux kill-session'
