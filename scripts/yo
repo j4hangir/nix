@@ -1,3 +1,8 @@
 #!/bin/sh
 # yo — yank output of last command to clipboard (non-blocking)
-( "$(dirname "$0")/../tmux/yank-last-output.sh" >/dev/null 2>&1 & )
+if [ -n "$TMUX" ]; then
+  NIXDIR="${NIXDIR:-/nix}"
+  tmux run-shell "$NIXDIR/tmux/yank-last-output.sh"
+else
+  ( "$(dirname "$0")/../tmux/yank-last-output.sh" >/dev/null 2>&1 & )
+fi
