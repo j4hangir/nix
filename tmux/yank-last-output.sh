@@ -1,34 +1,29 @@
 #!/bin/sh
-# Yank the output of the last command (text between the last two prompt lines).
-# Prompts are detected by common markers: ➜ ❯ $ % #
-# Pipes result to cb and notifies.
+# Yank the output of the last command (text between prompt lines).
+# Skips commands that produced no output (like "yo" itself).
 
 NIXDIR="${NIXDIR:-/nix}"
 pane=$(tmux capture-pane -pS -)
 
-# Find prompt line numbers (1-indexed).  Matches lines starting with optional
-# whitespace then a prompt character, or containing user@host patterns.
+# Find prompt line numbers (1-indexed).
 prompt_lines=$(echo "$pane" | grep -n '^[[:space:]]*[➜❯$%#]' | cut -d: -f1)
 
-# Need at least 2 prompt lines (previous command + current prompt)
 count=$(echo "$prompt_lines" | grep -c .)
-if [ "$count" -lt 2 ]; then
-  tmux display-message "no command output found"
-  exit 0
-fi
+[ "$count" -lt 2 ] && exit 0
 
-# Last prompt = current (empty) prompt, second-to-last = the command that produced output
-prev=$(echo "$prompt_lines" | tail -2 | head -1)
-last=$(echo "$prompt_lines" | tail -1)
-
-# Output is between prev+1 and last-1
-start=$((prev + 1))
-end=$((last - 1))
-
-if [ "$start" -gt "$end" ]; then
-  tmux display-message "last command had no output"
-  exit 0
-fi
-
-echo "$pane" | sed -n "${start},${end}p" | "$NIXDIR/scripts/cb"
-tmux display-message "output copied"
+# Walk backwards to find the last prompt that actually had output after it.
+# (Skips no-output commands like "yo" itself.)
+lines_list=$(echo "$prompt_lines" | sort -rn)
+prev_start=""
+for ln in $lines_list; do
+  if [ -n "$prev_start" ]; then
+    gap=$((prev_start - ln - 1))
+    if [ "$gap" -gt 0 ]; then
+      start=$((ln + 1))
+      end=$((prev_start - 1))
+      echo "$pane" | sed -n "${start},${end}p" | "$NIXDIR/scripts/cb"
+      exit 0
+    fi
+  fi
+  prev_start=$ln
+done

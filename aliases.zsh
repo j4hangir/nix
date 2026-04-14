@@ -316,6 +316,9 @@ nalias () {
 		source "$FILE"
 }
 
+# yank last command output to clipboard (leading space excludes from history)
+alias yo=" $NIXDIR/scripts/yo"
+
 # one-liner utils (previously standalone scripts)
 trim () { echo -e "$1" | awk '{$1=$1};1'; }
 alias ssh-fingerprint='ssh-keygen -l -E md5 -f <(ssh-keyscan localhost 2>/dev/null)'
