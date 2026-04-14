@@ -1,0 +1,3 @@
+#!/bin/sh
+# yo — yank output of last command to clipboard
+exec "$(dirname "$0")/../tmux/yank-last-output.sh"
