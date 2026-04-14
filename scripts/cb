@@ -9,5 +9,5 @@ elif command -v xclip >/dev/null 2>&1; then
 elif command -v xsel >/dev/null 2>&1; then
   xsel --clipboard --input
 else
-  osc52copy
+  "$(dirname "$0")/osc52copy"
 fi
