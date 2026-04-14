@@ -5,6 +5,10 @@ if [ -n "$TMUX" ]; then
   # Get the tmux client TTY and write directly to it
   client_tty=$(tmux display-message -p '#{client_tty}')
   printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$data" > "$client_tty"
-else
+elif [ -t 1 ] && [ -e /dev/tty ]; then
   printf '\033]52;c;%s\a' "$data" > /dev/tty
+else
+  # No TTY (e.g. inside Claude Code tool execution) — write to stdout
+  # so the parent process can pass the escape sequence through
+  printf '\033]52;c;%s\a' "$data"
 fi
