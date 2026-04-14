@@ -25,7 +25,7 @@ for ln in $lines_list; do
       echo "$pane" | sed -n "${start},${end}p" | "$NIXDIR/scripts/cb"
       tmux set -g @notify "#[fg=yellow,bold] yanked $gap line$([ "$gap" -ne 1 ] && echo s)"
       tmux refresh-client -S
-      sleep 2
+      sleep 3
       tmux set -g @notify ""
       tmux refresh-client -S
       exit 0
