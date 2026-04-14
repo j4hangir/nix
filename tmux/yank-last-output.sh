@@ -5,6 +5,7 @@
 NIXDIR="${NIXDIR:-/nix}"
 pane=$(tmux capture-pane -pS -)
 
+(
 # Find prompt line numbers (1-indexed).
 prompt_lines=$(echo "$pane" | grep -n '^[[:space:]]*[➜❯$%#]' | cut -d: -f1)
 
@@ -22,8 +23,14 @@ for ln in $lines_list; do
       start=$((ln + 1))
       end=$((prev_start - 1))
       echo "$pane" | sed -n "${start},${end}p" | "$NIXDIR/scripts/cb"
+      tmux set -g @notify "#[fg=yellow,bold] yanked $gap line$([ "$gap" -ne 1 ] && echo s)"
+      tmux refresh-client -S
+      sleep 2
+      tmux set -g @notify ""
+      tmux refresh-client -S
       exit 0
     fi
   fi
   prev_start=$ln
 done
+) &
