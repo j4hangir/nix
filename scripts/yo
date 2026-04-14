@@ -1,3 +1,4 @@
 #!/bin/sh
-# yo — yank output of last command to clipboard (non-blocking)
-"$(dirname "$0")/../tmux/yank-last-output.sh" 2>/dev/null &
+# yo — yank output of last command to clipboard (non-blocking, invisible)
+printf '\033[1A\033[2K'
+( "$(dirname "$0")/../tmux/yank-last-output.sh" >/dev/null 2>&1 & )
