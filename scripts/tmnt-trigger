@@ -17,7 +17,7 @@ on run argv
   set r to item 1 of argv
   tell application "iTerm2"
     tell current window
-      create tab with default profile command ("tmnt-mount " & quoted form of r)
+      create tab with default profile command ("/Users/afdom/nix/scripts/tmnt-mount " & quoted form of r)
     end tell
   end tell
 end run
