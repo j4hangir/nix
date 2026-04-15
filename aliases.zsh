@@ -334,7 +334,7 @@ adbscrshot () {
 # tmnt — temporary SSHFS mount (remote → mac Finder)
 # prints trigger marker for iTerm2 to auto-open tmnt-mount in a new tab
 # iTerm2 trigger setup (one-time):
-#   Regex:   \[tmnt:(.+)\]
+#   Regex:   \[tmnt:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+)\]
 #   Action:  Run Command
 #   Command: $HOME/.nix/scripts/tmnt-trigger \1
 tmnt () {
@@ -365,19 +365,17 @@ tmnt () {
 # dtmnt — dismount tmnt mounts
 if [[ $os == "mac" ]]; then
   dtmnt () {
-    local base="/tmp/tmnt"
-    if [[ ! -d "$base" ]]; then
-      printf '\033[2mno tmnt mounts\033[0m\n'
-      return 0
-    fi
     local any=0
-    for mp in "$base"/*/*(N); do
-      if [[ $# -ge 1 && "$mp" != *"/$1"* ]]; then
+    for mp in /Volumes/*(N); do
+      # Finder SFTP mounts show as "smbfs" type with sftp:// source
+      if ! mount | grep -q "on ${mp} .*smbfs"; then
+        continue
+      fi
+      if [[ $# -ge 1 && "$mp" != *"$1"* ]]; then
         continue
       fi
       printf '\033[33munmounting\033[0m %s ... ' "$mp"
-      if umount -f "$mp" 2>/dev/null; then
-        rmdir "$mp" 2>/dev/null
+      if umount "$mp" 2>/dev/null || diskutil unmount "$mp" 2>/dev/null; then
         printf '\033[32mok\033[0m\n'
       else
         printf '\033[31mfailed\033[0m\n'
@@ -386,17 +384,11 @@ if [[ $os == "mac" ]]; then
     done
     if [[ $any -eq 0 ]]; then
       if [[ $# -ge 1 ]]; then
-        printf '\033[31mno tmnt mount matching: %s\033[0m\n' "$1" >&2
+        printf '\033[31mno mount matching: %s\033[0m\n' "$1" >&2
         return 1
       fi
-      printf '\033[2mno tmnt mounts\033[0m\n'
-      return 0
+      printf '\033[2mno sftp mounts\033[0m\n'
     fi
-    # clean up empty dirs
-    for d in "$base"/*(N); do
-      rmdir "$d" 2>/dev/null
-    done
-    rmdir "$base" 2>/dev/null
   }
 fi
 
