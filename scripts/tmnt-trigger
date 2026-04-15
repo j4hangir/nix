@@ -12,18 +12,6 @@ if [[ ! "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/.+$ ]]; then
   exit 1
 fi
 
-# debounce: ignore re-triggers for same request within 30s
-lockfile="/tmp/tmnt-trigger.lock"
-now=$(date +%s)
-if [[ -f "$lockfile" ]]; then
-  last_remote=$(head -1 "$lockfile")
-  last_time=$(tail -1 "$lockfile")
-  if [[ "$last_remote" == "$remote" && $((now - last_time)) -lt 30 ]]; then
-    exit 0
-  fi
-fi
-printf '%s\n%s\n' "$remote" "$now" > "$lockfile"
-
 osascript - "$remote" <<'APPLESCRIPT'
 on run argv
   set r to item 1 of argv
