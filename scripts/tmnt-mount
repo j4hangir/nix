@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# tmnt-mount — mount remote path via SSHFS with safety confirmation
+# Usage: tmnt-mount user@host:/path
+
+set -euo pipefail
+
+# colors
+R='\033[31m' G='\033[32m' Y='\033[33m' D='\033[2m' B='\033[1m' Z='\033[0m'
+
+die() { printf "${R}%s${Z}\n" "$*" >&2; exit 1; }
+
+[[ "$(uname)" == "Darwin" ]] || die "tmnt-mount: mac only"
+[[ $# -ge 1 ]] || die "usage: tmnt-mount user@host:/path"
+
+remote="$1"
+
+# strict validation
+[[ "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/.+$ ]] || die "invalid format: $remote"
+
+userhost="${remote%%:*}"
+rpath="${remote#*:}"
+host="${userhost#*@}"
+basename="$(basename "$rpath")"
+mountpoint="/tmp/tmnt/${host}/${basename}"
+sshfs_opts="reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,volname=${host}:${basename}"
+
+# already mounted?
+if mount | grep -q " on ${mountpoint} "; then
+  printf "${G}already mounted:${Z} %s\n" "$mountpoint"
+  open "$mountpoint"
+  exit 0
+fi
+
+# show exact commands
+printf "\n${B}tmnt-mount${Z}\n\n"
+printf "  ${G}➜${Z} sshfs %s %s ${D}-o %s${Z}\n" "${userhost}:${rpath}" "$mountpoint" "$sshfs_opts"
+printf "  ${G}➜${Z} open %s\n\n" "$mountpoint"
+
+# 2-second countdown — all input ignored
+for i in 2 1; do
+  printf "\r  ${Y}%d...${Z} " "$i"
+  sleep 1
+done
+printf "\r        \r"
+
+# flush any buffered input
+while read -t 0 -n 1 2>/dev/null; do :; done
+
+# single keypress confirmation
+printf "  ${B}mount? [y/N]${Z} "
+read -rsn1 ans
+echo
+
+if [[ "$ans" != "y" && "$ans" != "Y" ]]; then
+  printf "  ${R}aborted${Z}\n"
+  exit 0
+fi
+
+# mount
+mkdir -p "$mountpoint"
+if ! sshfs "${userhost}:${rpath}" "$mountpoint" -o "$sshfs_opts"; then
+  rmdir "$mountpoint" 2>/dev/null
+  die "sshfs failed"
+fi
+
+printf "  ${G}mounted${Z} %s\n" "$mountpoint"
+open "$mountpoint"
+
+# timeout fallback for macOS
+if ! command -v timeout >/dev/null 2>&1; then
+  timeout() { perl -e 'alarm shift @ARGV; exec @ARGV' "$@"; }
+fi
+
+# background watchdog — auto-unmount when connection dies
+(
+  while sleep 60; do
+    if ! timeout 2 ls "$mountpoint" >/dev/null 2>&1; then
+      umount -f "$mountpoint" 2>/dev/null
+      rmdir "$mountpoint" 2>/dev/null
+      rmdir "$(dirname "$mountpoint")" 2>/dev/null
+      break
+    fi
+  done
+) &
+disown $! 2>/dev/null
+
+printf "  ${D}watchdog pid %s${Z}\n" "$!"

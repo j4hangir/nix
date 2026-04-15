@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# tmnt-trigger — called by iTerm2 trigger, opens a new tab with tmnt-mount
+# iTerm2 trigger setup:
+#   Regex:   \[tmnt:(.+)\]
+#   Action:  Run Command
+#   Command: $HOME/.nix/scripts/tmnt-trigger \1
+
+remote="$1"
+
+# strict validation: user@host:/path only
+if [[ ! "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/.+$ ]]; then
+  exit 1
+fi
+
+osascript - "$remote" <<'APPLESCRIPT'
+on run argv
+  set r to item 1 of argv
+  tell application "iTerm2"
+    tell current window
+      create tab with default profile command ("tmnt-mount " & quoted form of r)
+    end tell
+  end tell
+end run
+APPLESCRIPT
