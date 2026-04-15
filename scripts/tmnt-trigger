@@ -1,16 +1,29 @@
 #!/usr/bin/env bash
 # tmnt-trigger — called by iTerm2 trigger, opens a new tab with tmnt-mount
 # iTerm2 trigger setup:
-#   Regex:   \[tmnt:(.+)\]
+#   Regex:   \[tmnt:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+)\]
 #   Action:  Run Command
 #   Command: $HOME/.nix/scripts/tmnt-trigger \1
 
 remote="$1"
 
 # strict validation: user@host:/path only
-if [[ ! "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/.+$ ]]; then
+if [[ ! "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+$ ]]; then
   exit 1
 fi
+
+# lock: prevent duplicate triggers for same mount (60s window)
+lockdir="/tmp/tmnt-locks"
+mkdir -p "$lockdir"
+lockfile="${lockdir}/$(echo "$remote" | tr '/:@' '___')"
+now=$(date +%s)
+if [[ -f "$lockfile" ]]; then
+  last=$(cat "$lockfile")
+  if [[ $((now - last)) -lt 60 ]]; then
+    exit 0
+  fi
+fi
+echo "$now" > "$lockfile"
 
 osascript - "$remote" <<'APPLESCRIPT'
 on run argv
