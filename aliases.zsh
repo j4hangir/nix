@@ -355,8 +355,11 @@ tmnt () {
   local host="$(hostname)"
   local cmd="${user}@${host}:${target}"
   printf '\033[32mtmnt\033[0m %s\n' "$cmd"
-  # trigger marker — matched by iTerm2 trigger
-  printf '\033[2m[tmnt:%s]\033[0m\n' "$cmd"
+  # trigger marker — print, let iTerm2/mosh process it, then erase
+  # erasing removes it from tmux/mosh screen buffer so redraws won't re-trigger
+  printf '[tmnt:%s]' "$cmd"
+  sleep 0.1
+  printf '\r\033[K'
 }
 
 # dtmnt — dismount tmnt mounts
