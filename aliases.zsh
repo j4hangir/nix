@@ -331,6 +331,72 @@ adbscrshot () {
   fi
 }
 
+# tmnt — temporary SSHFS mount (remote → mac Finder)
+# prints trigger marker for iTerm2 to auto-open tmnt-mount in a new tab
+# iTerm2 trigger setup (one-time):
+#   Regex:   \[tmnt:(.+)\]
+#   Action:  Run Command
+#   Command: $HOME/.nix/scripts/tmnt-trigger \1
+tmnt () {
+  if [ "$#" -lt 1 ]; then
+    echo "usage: tmnt <path>"
+    return 1
+  fi
+  local target="$1"
+  if [[ -f "$target" ]]; then
+    target="$(cd "$(dirname "$target")" && pwd -P)"
+  elif [[ -d "$target" ]]; then
+    target="$(cd "$target" && pwd -P)"
+  else
+    printf '\033[31mtmnt: %s not found\033[0m\n' "$target" >&2
+    return 1
+  fi
+  local user="$(whoami)"
+  local host="$(hostname)"
+  local cmd="${user}@${host}:${target}"
+  printf '\033[32mtmnt\033[0m %s\n' "$cmd"
+  # trigger marker — matched by iTerm2 trigger
+  printf '\033[2m[tmnt:%s]\033[0m\n' "$cmd"
+}
+
+# dtmnt — dismount tmnt mounts
+if [[ $os == "mac" ]]; then
+  dtmnt () {
+    local base="/tmp/tmnt"
+    if [[ ! -d "$base" ]]; then
+      printf '\033[2mno tmnt mounts\033[0m\n'
+      return 0
+    fi
+    local any=0
+    for mp in "$base"/*/*(N); do
+      if [[ $# -ge 1 && "$mp" != *"/$1"* ]]; then
+        continue
+      fi
+      printf '\033[33munmounting\033[0m %s ... ' "$mp"
+      if umount -f "$mp" 2>/dev/null; then
+        rmdir "$mp" 2>/dev/null
+        printf '\033[32mok\033[0m\n'
+      else
+        printf '\033[31mfailed\033[0m\n'
+      fi
+      any=1
+    done
+    if [[ $any -eq 0 ]]; then
+      if [[ $# -ge 1 ]]; then
+        printf '\033[31mno tmnt mount matching: %s\033[0m\n' "$1" >&2
+        return 1
+      fi
+      printf '\033[2mno tmnt mounts\033[0m\n'
+      return 0
+    fi
+    # clean up empty dirs
+    for d in "$base"/*(N); do
+      rmdir "$d" 2>/dev/null
+    done
+    rmdir "$base" 2>/dev/null
+  }
+fi
+
 if [ -f "$HOME/.nix/aliases.zsh" ]; then
   source "$HOME/.nix/aliases.zsh"
 fi
