@@ -54,12 +54,22 @@ if [[ "$ans" != "y" && "$ans" != "Y" ]]; then
   exit 0
 fi
 
-# mount
+# mount (sshdav runs in foreground as a WebDAV server, so background it)
 mkdir -p "$mountpoint"
-if ! sshdav mount "${userhost}:${rpath}" "$mountpoint"; then
-  rmdir "$mountpoint" 2>/dev/null
-  die "sshdav mount failed"
-fi
+sshdav mount "${userhost}:${rpath}" "$mountpoint" &
+pid=$!
+disown $pid 2>/dev/null
 
-printf "  ${G}mounted${Z} %s\n" "$mountpoint"
-open "$mountpoint"
+# wait for mount to appear
+for i in $(seq 1 30); do
+  if mount | grep -q " on ${mountpoint} "; then
+    printf "  ${G}mounted${Z} %s\n" "$mountpoint"
+    open "$mountpoint"
+    exit 0
+  fi
+  sleep 0.5
+done
+
+kill $pid 2>/dev/null
+rmdir "$mountpoint" 2>/dev/null
+die "timed out waiting for mount"
