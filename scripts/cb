@@ -4,9 +4,9 @@ if [ "$(uname)" = "Darwin" ]; then
   pbcopy
 elif command -v wl-copy >/dev/null 2>&1; then
   wl-copy
-elif command -v xclip >/dev/null 2>&1; then
+elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
   xclip -selection clipboard
-elif command -v xsel >/dev/null 2>&1; then
+elif [ -n "$DISPLAY" ] && command -v xsel >/dev/null 2>&1; then
   xsel --clipboard --input
 else
   "$(dirname "$0")/osc52copy"
