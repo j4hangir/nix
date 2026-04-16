@@ -331,51 +331,31 @@ adbscrshot () {
   fi
 }
 
-# tmnt — temporary SSHFS mount (remote → mac Finder)
-# prints trigger marker for iTerm2 to auto-open tmnt-mount in a new tab
+# dav — mount remote dir in Finder via sshdav
 # iTerm2 trigger setup (one-time):
-#   Regex:   \[tmnt:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+)\]
+#   Regex:   \[dav:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+)\]
 #   Action:  Run Command
-#   Command: $HOME/.nix/scripts/tmnt-trigger \1
-tmnt () {
-  if [ "$#" -lt 1 ]; then
-    echo "usage: tmnt <path>"
-    return 1
-  fi
-  local target="$1"
-  if [[ -f "$target" ]]; then
-    target="$(cd "$(dirname "$target")" && pwd -P)"
-  elif [[ -d "$target" ]]; then
-    target="$(cd "$target" && pwd -P)"
-  else
-    printf '\033[31mtmnt: %s not found\033[0m\n' "$target" >&2
-    return 1
-  fi
-  local user="$(whoami)"
-  local host="$(hostname)"
-  local cmd="${user}@${host}:${target}"
-  printf '\033[32mtmnt\033[0m %s\n' "$cmd"
-  # trigger marker — print, let iTerm2/mosh process it, then erase
-  # erasing removes it from tmux/mosh screen buffer so redraws won't re-trigger
-  printf '[tmnt:%s]' "$cmd"
-  sleep 0.1
-  printf '\r\033[K'
-}
-
-# dtmnt — dismount tmnt mounts
-if [[ $os == "mac" ]]; then
-  dtmnt () {
+#   Command: /Users/afdom/nix/scripts/dav-trigger \1
+dav () {
+  # dav -d [name] — detach/unmount (mac only)
+  if [[ "$1" == "-d" ]]; then
+    if [[ $os != "mac" ]]; then
+      printf '\033[31mdav -d: mac only\033[0m\n' >&2
+      return 1
+    fi
+    local base="$HOME/mnt"
+    shift
     local any=0
-    for mp in /Volumes/*(N); do
-      # Finder SFTP mounts show as "smbfs" type with sftp:// source
-      if ! mount | grep -q "on ${mp} .*smbfs"; then
+    for mp in "$base"/*(N); do
+      [[ -d "$mp" ]] || continue
+      if ! mount | grep -q " on ${mp} "; then
         continue
       fi
-      if [[ $# -ge 1 && "$mp" != *"$1"* ]]; then
+      if [[ $# -ge 1 && "$(basename "$mp")" != *"$1"* ]]; then
         continue
       fi
       printf '\033[33munmounting\033[0m %s ... ' "$mp"
-      if umount "$mp" 2>/dev/null || diskutil unmount "$mp" 2>/dev/null; then
+      if sshdav unmount "$mp" 2>/dev/null; then
         printf '\033[32mok\033[0m\n'
       else
         printf '\033[31mfailed\033[0m\n'
@@ -387,10 +367,34 @@ if [[ $os == "mac" ]]; then
         printf '\033[31mno mount matching: %s\033[0m\n' "$1" >&2
         return 1
       fi
-      printf '\033[2mno sftp mounts\033[0m\n'
+      printf '\033[2mno dav mounts\033[0m\n'
     fi
-  }
-fi
+    return
+  fi
+
+  # dav <path> — trigger remote mount
+  if [ "$#" -lt 1 ]; then
+    echo "usage: dav <path> | dav -d [name]"
+    return 1
+  fi
+  local target="$1"
+  if [[ -f "$target" ]]; then
+    target="$(cd "$(dirname "$target")" && pwd -P)"
+  elif [[ -d "$target" ]]; then
+    target="$(cd "$target" && pwd -P)"
+  else
+    printf '\033[31mdav: %s not found\033[0m\n' "$target" >&2
+    return 1
+  fi
+  local user="$(whoami)"
+  local host="$(hostname)"
+  local cmd="${user}@${host}:${target}"
+  printf '\033[32mdav\033[0m %s\n' "$cmd"
+  # trigger marker — print, let iTerm2/mosh process it, then erase
+  printf '[dav:%s]' "$cmd"
+  sleep 0.1
+  printf '\r\033[K'
+}
 
 if [ -f "$HOME/.nix/aliases.zsh" ]; then
   source "$HOME/.nix/aliases.zsh"
