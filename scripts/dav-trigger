@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# tmnt-trigger — called by iTerm2 trigger, opens a new tab with tmnt-mount
+# dav-trigger — called by iTerm2 trigger, opens a new tab with dav-mount
 # iTerm2 trigger setup:
-#   Regex:   \[tmnt:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+)\]
+#   Regex:   \[dav:([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+)\]
 #   Action:  Run Command
-#   Command: $HOME/.nix/scripts/tmnt-trigger \1
+#   Command: /Users/afdom/nix/scripts/dav-trigger \1
 
 remote="$1"
 
@@ -13,7 +13,7 @@ if [[ ! "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+$ ]]; the
 fi
 
 # lock: prevent duplicate triggers for same mount (60s window)
-lockdir="/tmp/tmnt-locks"
+lockdir="/tmp/dav-locks"
 mkdir -p "$lockdir"
 lockfile="${lockdir}/$(echo "$remote" | tr '/:@' '___')"
 now=$(date +%s)
@@ -32,7 +32,7 @@ on run argv
     tell current window
       create tab with default profile
       tell current session of current tab
-        write text ("tmnt-mount " & quoted form of r)
+        write text ("dav-mount " & quoted form of r)
       end tell
     end tell
   end tell

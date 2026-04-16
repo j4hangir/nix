@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# dav-mount — mount remote path via sshdav with safety confirmation
+# Usage: dav-mount user@host:/path
+
+set -euo pipefail
+
+# colors
+R='\033[31m' G='\033[32m' Y='\033[33m' D='\033[2m' B='\033[1m' Z='\033[0m'
+
+die() { printf "${R}%s${Z}\n" "$*" >&2; exit 1; }
+
+[[ "$(uname)" == "Darwin" ]] || die "dav-mount: mac only"
+[[ $# -ge 1 ]] || die "usage: dav-mount user@host:/path"
+
+remote="$1"
+
+# strict validation
+[[ "$remote" =~ ^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+:/[a-zA-Z0-9/._-]+$ ]] || die "invalid format: $remote"
+
+userhost="${remote%%:*}"
+rpath="${remote#*:}"
+basename="$(basename "$rpath")"
+mountpoint="$HOME/mnt/${basename}"
+
+# already mounted?
+if mount | grep -q " on ${mountpoint} "; then
+  printf "${G}already mounted:${Z} %s\n" "$mountpoint"
+  open "$mountpoint"
+  exit 0
+fi
+
+# show exact commands
+printf "\n${B}dav-mount${Z}\n\n"
+printf "  ${G}➜${Z} sshdav mount %s %s\n" "${userhost}:${rpath}" "$mountpoint"
+printf "  ${G}➜${Z} open %s\n\n" "$mountpoint"
+
+# 2-second countdown — all input ignored
+for i in 2 1; do
+  printf "\r  ${Y}%d...${Z} " "$i"
+  sleep 1
+done
+printf "\r        \r"
+
+# flush any buffered input
+while read -t 0 -n 1 2>/dev/null; do :; done
+
+# single keypress confirmation
+printf "  ${B}mount? [y/N]${Z} "
+read -rsn1 ans
+echo
+
+if [[ "$ans" != "y" && "$ans" != "Y" ]]; then
+  printf "  ${R}aborted${Z}\n"
+  exit 0
+fi
+
+# mount
+mkdir -p "$mountpoint"
+if ! sshdav mount "${userhost}:${rpath}" "$mountpoint"; then
+  rmdir "$mountpoint" 2>/dev/null
+  die "sshdav mount failed"
+fi
+
+printf "  ${G}mounted${Z} %s\n" "$mountpoint"
+open "$mountpoint"
