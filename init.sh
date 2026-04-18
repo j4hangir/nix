@@ -124,9 +124,16 @@ if [[ -z "$TMUX" && $(ps -o comm= -p $PPID 2>/dev/null) == mosh-server ]]; then
 fi
 [[ -n "$NIX_MOSH" ]] && tmux set -g @mosh 1 2>/dev/null
 
-# terminal title: use full hostname, let tmux automatic-rename handle tabs
-ZSH_THEME_TERM_TITLE_IDLE="%n@%M:%~"
-[[ -n "$TMUX" ]] && DISABLE_AUTO_TITLE=true
+# terminal title: use full hostname, let tmux automatic-rename handle tabs.
+# roll our own title hook — OMZ's %~ picks up p10k's $_p9k__cwd as a named dir
+# (AUTO_NAME_DIRS) and prints "~_p9k__cwd" for deep paths.
+DISABLE_AUTO_TITLE=true
+if [[ -z "$TMUX" ]]; then
+  _nix_set_title() { print -Pn "\e]0;%n@%M:${PWD/#$HOME/~}\a" }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd _nix_set_title
+  add-zsh-hook preexec _nix_set_title
+fi
 
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
 unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS
