@@ -3,6 +3,10 @@
 autoload -U compinit zcalc
 autoload -U +X bashcompinit
 
+# standard user completion dir — must be on fpath before compinit so
+# installers that drop _foo files here (cobra CLIs, divinator, etc.) work
+[[ -d "$HOME/.zsh/completions" ]] && fpath=("$HOME/.zsh/completions" $fpath)
+
 zstyle ':completion:*' rehash true
 : "${ZSH_COMPDUMP:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump}"
 [[ -d "${ZSH_COMPDUMP:h}" ]] || mkdir -p "${ZSH_COMPDUMP:h}"
