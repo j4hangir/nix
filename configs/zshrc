@@ -67,6 +67,7 @@ setopt NO_CASE_GLOB
 
 #{{{ History
 
+HISTFILE="$HOME/.zsh_history"
 HISTSIZE=1000000
 SAVEHIST=1000000
 
