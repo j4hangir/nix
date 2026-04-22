@@ -10,4 +10,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require("options")
 require("keymaps")
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+  lockfile = vim.fn.stdpath("state") .. "/lazy-lock.json",
+})
