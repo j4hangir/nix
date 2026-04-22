@@ -46,7 +46,11 @@ source "$DIR/configs/zshrc"
 # 3. plugins (direct source — no plugin manager)
 # ---------------------------------------------------------------------------
 ZSH_PLUGINS="$HOME/.zsh/plugins"
-OMZ_PLUGINS="${ZSH:-$HOME/.oh-my-zsh}/plugins"
+OMZ_ROOT="${ZSH:-$HOME/.oh-my-zsh}"
+OMZ_PLUGINS="$OMZ_ROOT/plugins"
+
+# OMZ lib — keypad mode + Home/End/PageUp/PageDown/Del/history-search bindkeys
+_nix_source "$OMZ_ROOT/lib/key-bindings.zsh"
 
 # external (cloned by setup.sh)
 _nix_source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
@@ -136,4 +140,4 @@ if [[ -z "$TMUX" ]]; then
 fi
 
 # clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
-unset DIR SPATH ZSH_PLUGINS OMZ_PLUGINS
+unset DIR SPATH ZSH_PLUGINS OMZ_ROOT OMZ_PLUGINS
