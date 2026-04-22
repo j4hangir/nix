@@ -1,13 +1,13 @@
 #{{{ ZSH Modules
 
 autoload -U compinit zcalc
+autoload -U +X bashcompinit
 
 zstyle ':completion:*' rehash true
-if [[ -n "$ZSH_COMPDUMP" && -f "$ZSH_COMPDUMP" ]]; then
-  source "$ZSH_COMPDUMP"
-else
-  compinit
-fi
+: "${ZSH_COMPDUMP:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump}"
+[[ -d "${ZSH_COMPDUMP:h}" ]] || mkdir -p "${ZSH_COMPDUMP:h}"
+compinit -C -d "$ZSH_COMPDUMP"
+bashcompinit
 
 #}}}
 
