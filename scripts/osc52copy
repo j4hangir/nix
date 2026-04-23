@@ -1,14 +1,30 @@
 #!/bin/sh
-# Copy stdin to system clipboard via OSC 52, wrapped in DCS for tmux passthrough
+# Copy stdin to system clipboard via OSC 52.
+# When inside tmux we bypass tmux and write straight to the attached client's
+# TTY, so no DCS passthrough wrapping is needed (and wrapping here breaks
+# iTerm2, which doesn't speak DCS tmux passthrough).
 data=$(base64 | tr -d "\n")
+osc=$(printf '\033]52;c;%s\a' "$data")
+
 if [ -n "$TMUX" ]; then
-  # Get the tmux client TTY and write directly to it
-  client_tty=$(tmux display-message -p '#{client_tty}')
-  printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$data" > "$client_tty"
-elif [ -t 1 ] && [ -e /dev/tty ]; then
-  printf '\033]52;c;%s\a' "$data" > /dev/tty
+  client_tty=$(tmux display-message -p '#{client_tty}' 2>/dev/null)
+  if [ -n "$client_tty" ] && [ -w "$client_tty" ]; then
+    printf '%s' "$osc" > "$client_tty" && exit 0
+  fi
+  # No writable client TTY (detached session, reattached from another client,
+  # or multi-client pick-the-wrong-one). Fall back to writing through tmux;
+  # requires `set -g allow-passthrough on` in tmux.conf for tmux >= 3.3.
+  if [ -w /dev/tty ]; then
+    printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$data" > /dev/tty && exit 0
+  fi
+  printf '\033Ptmux;\033\033]52;c;%s\a\033\\' "$data"
+  exit 0
+fi
+
+if [ -t 1 ] && [ -e /dev/tty ]; then
+  printf '%s' "$osc" > /dev/tty
 else
   # No TTY (e.g. inside Claude Code tool execution) — write to stdout
-  # so the parent process can pass the escape sequence through
-  printf '\033]52;c;%s\a' "$data"
+  # so the parent process can pass the escape sequence through.
+  printf '%s' "$osc"
 fi
