@@ -62,7 +62,9 @@ elif [[ $os == 'freebsd' || $os == 'mac' ]]; then
 fi
 
 # process find
-alias pf='ps aux | grep --color=auto -i'
+pf() {
+	pgrep -af "$@" | awk -v w=$COLUMNS '{print substr($0,1,w)}' | grep --color=always -iE "$@|$"
+}
 # cd and ls
 cdl () {
 	cd "$1" && l
