@@ -155,11 +155,11 @@ gz () {
 # disk usage, total, human and summarized
 dush () {
 	if command -v dust &>/dev/null; then
-		dust "${@:-.}"
+		dust -r "${@:-.}"
 	elif [ "$#" -lt 1 ]; then
-		du -csh *
+		du -csh * | sort -h
 	else
-		du -chs "$@"
+		du -chs "$@" | sort -h
 	fi
 }
 
