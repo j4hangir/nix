@@ -78,68 +78,31 @@
   typeset -g POWERLEVEL9K_DIR_CLASSES=()
 
   ##############################################################################
-  # VCS (git)
+  # VCS (git) — robbyrussell style: "git:(branch) ✗" if dirty
   ##############################################################################
-  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=76
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=178
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=166
-  typeset -g POWERLEVEL9K_VCS_CONFLICTED_FOREGROUND=196
-  typeset -g POWERLEVEL9K_VCS_LOADING_FOREGROUND=244
+  typeset -g POWERLEVEL9K_VCS_LOADING_FOREGROUND=246
 
-  # Branch icon — ascii-safe.
-  typeset -g POWERLEVEL9K_VCS_BRANCH_ICON=''
+  # Disable p10k's built-in formatting; use my_git_formatter instead.
+  typeset -g POWERLEVEL9K_VCS_DISABLE_GITSTATUS_FORMATTING=true
+  typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${$((my_git_formatter(1)))+${my_git_format}}'
+  typeset -g POWERLEVEL9K_VCS_LOADING_CONTENT_EXPANSION='${$((my_git_formatter(0)))+${my_git_format}}'
 
-  # Show detailed git status.
-  typeset -g POWERLEVEL9K_VCS_MAX_INDEX_SIZE_DIRTY=-1
+  # Only need dirty-vs-clean, not counts — cap at 1 for speed in large repos.
+  typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED,CONFLICTED,COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=1
 
-  # Formatting — branch name + status markers.
-  typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${$((my_git_format[1]))+${my_git_format[1]}}'
-
-  # gitstatus — enable all counters.
-  typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED,CONFLICTED,COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=-1
-
-  # Git status formatting function — called by p10k internally.
   function my_git_formatter() {
     emulate -L zsh
-
     if [[ -n $P9K_CONTENT ]]; then
-      # Already formatted (e.g., loading state).
-      my_git_format=("$P9K_CONTENT")
-      return
-    fi
-
-    local res
-    local where
-
-    if [[ -n $VCS_STATUS_LOCAL_BRANCH ]]; then
-      where=${(V)VCS_STATUS_LOCAL_BRANCH}
-    elif [[ -n $VCS_STATUS_TAG ]]; then
-      where="#${(V)VCS_STATUS_TAG}"
+      typeset -g my_git_format=$P9K_CONTENT
     else
-      where="@${VCS_STATUS_COMMIT[1,8]}"
+      typeset -g my_git_format="${1+%B%4F}git:(${1+%1F}"
+      my_git_format+=${${VCS_STATUS_LOCAL_BRANCH:-${VCS_STATUS_COMMIT[1,8]}}//\%/%%}
+      my_git_format+="${1+%4F})"
+      if (( VCS_STATUS_NUM_CONFLICTED || VCS_STATUS_NUM_STAGED ||
+            VCS_STATUS_NUM_UNSTAGED   || VCS_STATUS_NUM_UNTRACKED )); then
+        my_git_format+=" ${1+%3F}✗"
+      fi
     fi
-
-    res="${where//\%/%%}"  # escape percents
-
-    # Upstream tracking — ahead/behind.
-    (( VCS_STATUS_COMMITS_BEHIND )) && res+=" %{%F{red}%}${VCS_STATUS_COMMITS_BEHIND}v%{%f%}"
-    (( VCS_STATUS_COMMITS_AHEAD  )) && res+=" %{%F{green}%}${VCS_STATUS_COMMITS_AHEAD}^%{%f%}"
-
-    # Stashes.
-    (( VCS_STATUS_STASHES )) && res+=" %{%F{cyan}%}*${VCS_STATUS_STASHES}%{%f%}"
-
-    # Staged / unstaged / untracked / conflicted.
-    (( VCS_STATUS_NUM_STAGED    )) && res+=" %{%F{green}%}+${VCS_STATUS_NUM_STAGED}%{%f%}"
-    (( VCS_STATUS_NUM_UNSTAGED  )) && res+=" %{%F{yellow}%}!${VCS_STATUS_NUM_UNSTAGED}%{%f%}"
-    (( VCS_STATUS_NUM_UNTRACKED )) && res+=" %{%F{blue}%}?${VCS_STATUS_NUM_UNTRACKED}%{%f%}"
-    (( VCS_STATUS_NUM_CONFLICTED)) && res+=" %{%F{red}%}~${VCS_STATUS_NUM_CONFLICTED}%{%f%}"
-
-    # Action (rebase, merge, cherry-pick, etc.).
-    if [[ -n $VCS_STATUS_ACTION ]]; then
-      res+=" %{%F{242}%}${VCS_STATUS_ACTION}%{%f%}"
-    fi
-
-    my_git_format=("$res")
   }
   functions -M my_git_formatter 2>/dev/null
 
