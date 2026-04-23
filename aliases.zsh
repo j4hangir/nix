@@ -29,9 +29,9 @@ alias whereami="ps -p $$; pwd -P"
 
 #** Nix specific 
 # reload nix
-alias nix-reload='$NIXDIR/init.sh; [[ -n "$TMUX" ]] && tmux source-file $NIXDIR/configs/tmux.conf 2>/dev/null'
+alias nix-reload='unset _NIX_INIT_LOADED && source $NIXDIR/init.sh; [[ -n "$TMUX" ]] && tmux source-file $NIXDIR/configs/tmux.conf 2>/dev/null'
 # update nix
-alias nix-update='pushd $NIXDIR; git pull; popd; $NIXDIR/init.sh' 
+alias nix-update='pushd $NIXDIR; git pull; popd; unset _NIX_INIT_LOADED && source $NIXDIR/init.sh'
 alias nix-cd='pushd $NIXDIR'
 
 # define dummy `sudo` for distribus. that don't have, e.g. debian

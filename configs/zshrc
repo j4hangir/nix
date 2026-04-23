@@ -1,17 +1,10 @@
-#{{{ ZSH Modules
+#{{{ Completion tweaks (compinit itself runs in init.sh)
 
-autoload -U compinit zcalc
-autoload -U +X bashcompinit
-
-# standard user completion dir — must be on fpath before compinit so
-# installers that drop _foo files here (cobra CLIs, divinator, etc.) work
-[[ -d "$HOME/.zsh/completions" ]] && fpath=("$HOME/.zsh/completions" $fpath)
-
+# rehash on completion so newly-installed binaries appear without restart
 zstyle ':completion:*' rehash true
-: "${ZSH_COMPDUMP:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump}"
-[[ -d "${ZSH_COMPDUMP:h}" ]] || mkdir -p "${ZSH_COMPDUMP:h}"
-compinit -C -d "$ZSH_COMPDUMP"
-bashcompinit
+
+# bash-style completions (needed by register-python-argcomplete pipx, etc.)
+autoload -U +X bashcompinit && bashcompinit
 
 #}}}
 
@@ -70,10 +63,9 @@ setopt NO_CASE_GLOB
 #}}}
 
 #{{{ History
-
-HISTFILE="$HOME/.zsh_history"
-HISTSIZE=1000000
-SAVEHIST=1000000
+# HISTFILE / HISTSIZE / SAVEHIST are set in init.sh BEFORE oh-my-zsh.sh is
+# sourced, so OMZ's lib/history.zsh floor checks (HISTSIZE -lt 50000 etc.) are
+# no-ops. This block is just the authoritative setopt overrides.
 
 setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY          # Write the history file in the ":start:elapsed;command" format.
@@ -90,10 +82,7 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 #}}}
 
-# TERM is set by the terminal emulator / tmux — don't override it here.
-
 # colors
 command -v dircolors &>/dev/null && eval "$(dircolors -b)"
 LS_COLORS=$LS_COLORS:'ow=30;44:'
 export LS_COLORS
-

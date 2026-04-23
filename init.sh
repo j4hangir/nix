@@ -1,9 +1,13 @@
 #!/usr/bin/env zsh
+# idempotency guard — user zshrc may source this more than once
+[[ -n "${_NIX_INIT_LOADED-}" ]] && return 0
+typeset -g _NIX_INIT_LOADED=1
+
 DIR="$( cd "$( dirname "${BASH_SOURCE:-$0}" )" && pwd )"
 
 # ---------------------------------------------------------------------------
-# p10k instant prompt — should be near the top of .zshrc, before init.sh.
-# Guard: only activate here if not already running (i.e. .zshrc didn't do it).
+# p10k instant prompt — near the top, before any console output.
+# Guarded so we don't re-source if the user's zshrc already did it.
 # ---------------------------------------------------------------------------
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 if [[ -z "${_p10k_instant_prompt_sourced-}" ]]; then
@@ -13,7 +17,7 @@ if [[ -z "${_p10k_instant_prompt_sourced-}" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# helper: conditional loading with one-time notice
+# helpers
 # ---------------------------------------------------------------------------
 _nix_check() {
   command -v "$1" &>/dev/null && return 0
@@ -28,8 +32,7 @@ _nix_source() {
 # ---------------------------------------------------------------------------
 # PATH
 # ---------------------------------------------------------------------------
-SPATH=$DIR/scripts
-[[ ":$PATH:" != *":$SPATH:"* ]] && PATH="$SPATH:${PATH}"
+[[ ":$PATH:" != *":$DIR/scripts:"* ]] && PATH="$DIR/scripts:${PATH}"
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && PATH="$HOME/.local/bin:${PATH}"
 
 # ---------------------------------------------------------------------------
@@ -38,68 +41,80 @@ SPATH=$DIR/scripts
 source "$DIR/envs.sh"
 
 # ---------------------------------------------------------------------------
-# 2. shell options & completions
+# 2. oh-my-zsh — configure BEFORE sourcing so OMZ sees our settings.
+#    OMZ handles: fpath for each plugin, a single compinit, lib/*.zsh,
+#    and each plugin.plugin.zsh.
+# ---------------------------------------------------------------------------
+export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
+
+# History vars set pre-OMZ so lib/history.zsh's floor checks are no-ops.
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=1000000
+SAVEHIST=1000000
+
+# User completion dir on fpath BEFORE compinit (OMZ or fallback).
+[[ -d "$HOME/.zsh/completions" ]] && fpath=("$HOME/.zsh/completions" $fpath)
+
+if [[ -d "$ZSH" ]]; then
+  plugins=(
+    git
+    command-not-found
+    colored-man-pages
+    encode64
+    colorize
+    npm
+    pip
+    gem
+    ruby
+    python
+    bundler
+  )
+  [[ "$(uname)" == "Darwin" ]] && plugins+=(brew macos)
+
+  ZSH_THEME=""                     # p10k is sourced explicitly below
+  DISABLE_AUTO_UPDATE=true         # no surprise prompts on shell start
+  DISABLE_AUTO_TITLE=true          # MUST be set BEFORE OMZ; we roll our own
+  ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+  ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-${HOST}-${ZSH_VERSION}"
+  mkdir -p "$ZSH_CACHE_DIR" "${ZSH_COMPDUMP:h}"
+
+  source "$ZSH/oh-my-zsh.sh"
+else
+  # Graceful fallback if OMZ isn't installed: still get basic completions.
+  autoload -U compinit && compinit -i
+fi
+
+# ---------------------------------------------------------------------------
+# 3. post-OMZ overrides (setopts, history options, LS_COLORS, bashcompinit)
 # ---------------------------------------------------------------------------
 source "$DIR/configs/zshrc"
 
 # ---------------------------------------------------------------------------
-# 3. plugins (direct source — no plugin manager)
+# 4. external plugins (not in OMZ, cloned to ~/.zsh/plugins by setup.sh)
 # ---------------------------------------------------------------------------
 ZSH_PLUGINS="$HOME/.zsh/plugins"
-OMZ_ROOT="${ZSH:-$HOME/.oh-my-zsh}"
-OMZ_PLUGINS="$OMZ_ROOT/plugins"
-
-# OMZ lib — keypad mode + Home/End/PageUp/PageDown/Del/history-search bindkeys
-_nix_source "$OMZ_ROOT/lib/key-bindings.zsh"
-
-# external (cloned by setup.sh)
 _nix_source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 _nix_source "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-# oh-my-zsh plugins (already on disk via oh-my-zsh)
-_nix_source "$OMZ_PLUGINS/command-not-found/command-not-found.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/colored-man-pages/colored-man-pages.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/encode64/encode64.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/colorize/colorize.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/npm/npm.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/pip/pip.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/gem/gem.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/ruby/ruby.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/python/python.plugin.zsh"
-_nix_source "$OMZ_PLUGINS/bundler/bundler.plugin.zsh"
-
-# macOS-only
-if [[ "$(uname)" == "Darwin" ]]; then
-  _nix_source "$OMZ_PLUGINS/brew/brew.plugin.zsh"
-  _nix_source "$OMZ_PLUGINS/macos/macos.plugin.zsh"
-fi
-
-# theme
 _nix_source "$ZSH_PLUGINS/powerlevel10k/powerlevel10k.zsh-theme"
 
 # ---------------------------------------------------------------------------
-# 4. aliases & functions (after plugins so we can override)
+# 5. aliases & functions (after plugins so we can override)
 # ---------------------------------------------------------------------------
 source "$DIR/aliases.zsh"
 
 # ---------------------------------------------------------------------------
-# 5. iterm2 ssh tab colors (macOS + iTerm only)
+# 6. iterm2 ssh tab colors (macOS + iTerm only) — uses compdef
 # ---------------------------------------------------------------------------
 if [[ "$(uname)" == "Darwin" && "$TERM_PROGRAM" == "iTerm.app" ]]; then
   source "$DIR/iTerm2-ssh.zsh"
 fi
 
 # ---------------------------------------------------------------------------
-# 6. conditional tool integrations
+# 7. conditional tool integrations
 # ---------------------------------------------------------------------------
-
-# fzf
-_nix_check fzf && source "$DIR/fzf-history.zsh"
-
-# zoxide — smarter cd (z, zi)
+_nix_check fzf    && source "$DIR/fzf-history.zsh"
 _nix_check zoxide && eval "$(zoxide init zsh)"
 
-# bat → cat alias
 if command -v bat &>/dev/null; then
   alias cat='bat --paging=never'
 elif command -v batcat &>/dev/null; then
@@ -107,17 +122,18 @@ elif command -v batcat &>/dev/null; then
   alias bat='batcat'
 fi
 
-# nvim → vim alias
 command -v nvim &>/dev/null && alias vim='nvim'
 
-# clipboard
-source "$NIXDIR/utils/clipboard.zsh"
+_nix_source "$DIR/utils/clipboard.zsh"
 
 # ---------------------------------------------------------------------------
-# 7. p10k config
+# 8. p10k config
 # ---------------------------------------------------------------------------
 [[ -f "$DIR/configs/p10k.zsh" ]] && source "$DIR/configs/p10k.zsh"
 
+# ---------------------------------------------------------------------------
+# 9. tmux / mosh env + terminal title
+# ---------------------------------------------------------------------------
 # set user once to avoid #(whoami) shell spawns in set-titles-string
 [[ -n "$TMUX" ]] && tmux set -g @user "$(whoami)" 2>/dev/null
 
@@ -128,10 +144,9 @@ if [[ -z "$TMUX" && $(ps -o comm= -p $PPID 2>/dev/null) == mosh-server ]]; then
 fi
 [[ -n "$NIX_MOSH" ]] && tmux set -g @mosh 1 2>/dev/null
 
-# terminal title: use full hostname, let tmux automatic-rename handle tabs.
-# roll our own title hook — OMZ's %~ picks up p10k's $_p9k__cwd as a named dir
+# terminal title: full hostname outside tmux; tmux handles it inside.
+# Roll our own because OMZ's %~ picks up p10k's $_p9k__cwd as a named dir
 # (AUTO_NAME_DIRS) and prints "~_p9k__cwd" for deep paths.
-DISABLE_AUTO_TITLE=true
 if [[ -z "$TMUX" ]]; then
   _nix_set_title() { print -Pn "\e]0;%n@%M:${PWD/#$HOME/~}\a" }
   autoload -Uz add-zsh-hook
@@ -139,5 +154,5 @@ if [[ -z "$TMUX" ]]; then
   add-zsh-hook preexec _nix_set_title
 fi
 
-# clean up — prevent AUTO_NAME_DIRS from showing ~DIR in prompt
-unset DIR SPATH ZSH_PLUGINS OMZ_ROOT OMZ_PLUGINS
+# prevent AUTO_NAME_DIRS from showing ~DIR in prompt
+unset DIR ZSH_PLUGINS
