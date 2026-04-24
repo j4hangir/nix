@@ -1,12 +1,14 @@
 #!/bin/sh
-# Cross-platform paste from clipboard (clipboard → stdout)
+# Cross-platform paste from clipboard (clipboard → stdout).
+# Same backend-selection rules as cb (sans OSC 52 — no reliable paste
+# equivalent): a backend is only used if its display session is present.
 if [ "$(uname)" = "Darwin" ]; then
   pbpaste
-elif command -v wl-paste >/dev/null 2>&1; then
+elif [ -n "$WAYLAND_DISPLAY" ] && command -v wl-paste >/dev/null 2>&1; then
   wl-paste
-elif command -v xclip >/dev/null 2>&1; then
+elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
   xclip -selection clipboard -o
-elif command -v xsel >/dev/null 2>&1; then
+elif [ -n "$DISPLAY" ] && command -v xsel >/dev/null 2>&1; then
   xsel --clipboard --output
 else
   echo "cbp: no paste backend available" >&2

@@ -1,8 +1,13 @@
 #!/bin/sh
-# Cross-platform copy to clipboard (stdin → clipboard)
+# Cross-platform copy to clipboard (stdin → clipboard).
+# Backends are picked at runtime, in this order:
+#   macOS       → pbcopy
+#   Wayland     → wl-copy         (requires $WAYLAND_DISPLAY)
+#   X11         → xclip / xsel    (requires $DISPLAY)
+#   fallback    → OSC 52          (works over SSH/tmux)
 if [ "$(uname)" = "Darwin" ]; then
   pbcopy
-elif command -v wl-copy >/dev/null 2>&1; then
+elif [ -n "$WAYLAND_DISPLAY" ] && command -v wl-copy >/dev/null 2>&1; then
   wl-copy
 elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
   xclip -selection clipboard

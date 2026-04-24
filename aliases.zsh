@@ -71,7 +71,7 @@ cdl () {
 }
 
 function find_bundle_name() {
-  mdfind "kMDItemKind == 'Application'" | grep -i "$1" | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(pbcopy)
+  mdfind "kMDItemKind == 'Application'" | grep -i "$1" | head -1 | xargs -I {} defaults read {}/Contents/Info CFBundleIdentifier | tee >(cb)
 }
 
 opf () {
@@ -110,7 +110,7 @@ getip () {
 		IP=$(host "$@" | awk '{ print $4 }')
 	fi
 	echo "$IP"
-	echo "$IP" | pbcopy > /dev/null 2>&1
+	echo "$IP" | cb > /dev/null 2>&1
 }
 
 # cp & mv pushd

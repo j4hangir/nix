@@ -72,7 +72,7 @@ That's it. `setup.sh` handles everything in one run:
 
 - **Prefix**: `Ctrl-U`
 - **Dvorak-optimized** pane navigation — `h` / `t` / `n` / `s`
-- Vi copy mode with `pbcopy` integration
+- Vi copy mode via `cb` (pbcopy / wl-copy / xclip / xsel / OSC 52)
 - Mouse support, `|` and `-` to split, 30k line scrollback
 - `Shift-H` to toggle pane logging
 
