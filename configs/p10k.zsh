@@ -22,6 +22,9 @@
   # 'quiet' suppresses warnings about output before instant prompt.
   typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
+  # OSC 133 prompt markers for tmux/iTerm2 prompt navigation.
+  typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
+
   ##############################################################################
   # Core / style
   ##############################################################################
