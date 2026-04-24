@@ -21,10 +21,13 @@ if [ -n "$TMUX" ]; then
   exit 0
 fi
 
-if [ -t 1 ] && [ -e /dev/tty ]; then
+if [ -w /dev/tty ]; then
+  # Prefer the controlling terminal even when stdout is a pipe (e.g. nvim's
+  # clipboard provider invokes us via jobstart — stdout is captured, but the
+  # parent still has a usable /dev/tty).
   printf '%s' "$osc" > /dev/tty
 else
-  # No TTY (e.g. inside Claude Code tool execution) — write to stdout
-  # so the parent process can pass the escape sequence through.
+  # No controlling TTY (e.g. inside Claude Code tool execution) — write to
+  # stdout so the parent process can pass the escape sequence through.
   printf '%s' "$osc"
 fi
