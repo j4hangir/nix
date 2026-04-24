@@ -1,0 +1,26 @@
+#!/bin/sh
+# Undo the last fzf-hist-rm deletion by restoring $HISTFILE from the .bak
+# snapshot. One-level undo: the snapshot and last-deleted pointer are
+# consumed on success. Emits a short status line for fzf's header via
+# fzf-hist-notify.
+: "${HISTFILE:=$HOME/.zsh_history}"
+
+if [ ! -f "$HISTFILE.bak" ]; then
+  exec fzf-hist-notify 'nothing to undo'
+fi
+
+if ! mv "$HISTFILE.bak" "$HISTFILE"; then
+  exec fzf-hist-notify 'undo failed'
+fi
+
+if [ -n "$_FZF_HIST_RM_FLAG" ]; then
+  : > "$_FZF_HIST_RM_FLAG"
+fi
+
+cmd=""
+if [ -f "$HISTFILE.last-deleted" ]; then
+  cmd=$(cat "$HISTFILE.last-deleted")
+  rm -f "$HISTFILE.last-deleted"
+fi
+
+exec fzf-hist-notify restored "$cmd"

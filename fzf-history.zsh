@@ -8,6 +8,7 @@
 #   Tab / S-Tab - navigate down / up
 #   Ctrl+E      - toggle exact/fuzzy matching
 #   Delete      - forget the highlighted entry (removes it from $HISTFILE)
+#   Ctrl+Z      - undo the last delete (one level, .bak snapshot)
 #   Ctrl+C      - cancel
 #
 # Requires: fzf
@@ -33,15 +34,21 @@ fzf-execute-command() {
   #   `fzf-hist-rm {}` can match exactly instead of failing on whitespace drift.
   # - --scheme=history: scoring tuned for command history (prefix + recency bias)
   # - --tiebreak=index: recency breaks ties among equal scores
+  # --listen 0 starts an HTTP control socket on a random port and exports
+  # $FZF_PORT to subprocesses. fzf-hist-notify uses it to auto-clear the
+  # header after 5s; without it, the "deleted:" / "restored:" message would
+  # stick until the next action.
   selected=$(fzf-hist-list | fzf \
     --height 40% --border --layout=reverse-list \
     --scheme=history --tiebreak=index \
+    --listen 0 \
     --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \
     --bind "tab:down,shift-tab:up,right:accept+execute-silent(echo right > $action_file),enter:accept+execute-silent(echo enter > $action_file)" \
     --bind 'ctrl-e:transform-query(fzf-toggle-exact {q})+transform-prompt([[ {fzf:prompt} == EXACT* ]] && echo "> " || echo "EXACT > ")' \
-    --bind 'delete:execute-silent(fzf-hist-rm {})+transform-header(printf "deleted: %s" {})+reload(fzf-hist-list)' \
-    --expect=ctrl-c)
+    --bind 'delete:execute-silent(fzf-hist-rm {})+transform-header(fzf-hist-notify deleted {})+reload(fzf-hist-list)' \
+    --bind 'ctrl-z:transform-header(fzf-hist-undo)+reload(fzf-hist-list)' \
+    --expect=ctrl-c 2>/dev/null)
 
   local exit_status=$?
   unset _FZF_HIST_RM_FLAG

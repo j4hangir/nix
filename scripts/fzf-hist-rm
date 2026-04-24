@@ -69,6 +69,8 @@ if [ "$removed" -gt 50 ]; then
 fi
 
 cp "$HISTFILE" "$HISTFILE.bak" || exit 1
+# Remember the removed cmd so fzf-hist-undo can tell the user what it restored.
+printf '%s' "$cmd" > "$HISTFILE.last-deleted"
 mv "$tmp" "$HISTFILE" || exit 1
 
 if [ -n "$_FZF_HIST_RM_FLAG" ]; then
