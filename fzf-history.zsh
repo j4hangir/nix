@@ -7,6 +7,7 @@
 #   Right arrow - select and paste into prompt (for editing before running)
 #   Tab / S-Tab - navigate down / up
 #   Ctrl+E      - toggle exact/fuzzy matching
+#   Delete      - forget the highlighted entry (removes it from $HISTFILE)
 #   Ctrl+C      - cancel
 #
 # Requires: fzf
@@ -19,21 +20,45 @@ fi
 fzf-execute-command() {
   local selected
   local action_file="/tmp/fzf_action"
+  # Per-shell flag fzf-hist-rm touches when it actually deletes something.
+  # Checked after fzf exits so we only clear+reload in-memory history when
+  # a delete really happened.
+  local hist_rm_flag="/tmp/fzf_hist_rm.$$"
+  rm -f "$hist_rm_flag"
+  export _FZF_HIST_RM_FLAG="$hist_rm_flag"
 
   # Pick a command from history using fzf
-  # - awk deduplicates while preserving recency order
+  # - fzf-hist-list reads HISTFILE (already deduped, recency-ordered); sourcing
+  #   from it means the line fzf shows matches the file byte-for-byte, so
+  #   `fzf-hist-rm {}` can match exactly instead of failing on whitespace drift.
   # - --scheme=history: scoring tuned for command history (prefix + recency bias)
   # - --tiebreak=index: recency breaks ties among equal scores
-  selected=$(fc -rl 1 | awk '{$1=""; cmd=substr($0,2)} !seen[cmd]++ {print cmd}' | fzf \
+  selected=$(fzf-hist-list | fzf \
     --height 40% --border --layout=reverse-list \
     --scheme=history --tiebreak=index \
     --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \
     --bind "tab:down,shift-tab:up,right:accept+execute-silent(echo right > $action_file),enter:accept+execute-silent(echo enter > $action_file)" \
     --bind 'ctrl-e:transform-query(fzf-toggle-exact {q})+transform-prompt([[ {fzf:prompt} == EXACT* ]] && echo "> " || echo "EXACT > ")' \
+    --bind 'delete:execute-silent(fzf-hist-rm {})+transform-header(printf "deleted: %s" {})+reload(fzf-hist-list)' \
     --expect=ctrl-c)
 
   local exit_status=$?
+  unset _FZF_HIST_RM_FLAG
+
+  # If fzf-hist-rm actually removed an entry, refresh in-memory history from
+  # the (already-edited) file so up-arrow / ^R don't resurrect deleted entries.
+  # Guard on -s: if HISTFILE ever ended up empty/missing, keep whatever we
+  # have in memory rather than nuking it.
+  if [[ -f "$hist_rm_flag" ]]; then
+    rm -f "$hist_rm_flag"
+    if [[ -s "$HISTFILE" ]]; then
+      local _saved_histsize=$HISTSIZE
+      HISTSIZE=0
+      HISTSIZE=$_saved_histsize
+      fc -R "$HISTFILE"
+    fi
+  fi
 
   # Bail on Ctrl+C
   if [[ $exit_status -eq 130 || "$selected" == *"ctrl-c"* ]]; then

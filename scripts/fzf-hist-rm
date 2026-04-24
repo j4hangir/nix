@@ -1,0 +1,76 @@
+#!/bin/sh
+# Remove a command from zsh $HISTFILE (EXTENDED_HISTORY format).
+# Handles multi-line commands (trailing \).
+#
+# Safety layers (in order of defense):
+#   1. No match           → file untouched, script exits 0 silently.
+#   2. Line-count mismatch → abort (awk drop-count must equal on-disk delta).
+#   3. Bulk-removal cap   → refuse > 50 entries in a single call.
+#   4. Multi-line cap     → per-entry continuation loop stops at 100 lines.
+#   5. .bak snapshot      → $HISTFILE.bak holds pre-delete state (1-level undo).
+#   6. Trap on exit       → temp file cleaned up even if awk is killed.
+#
+# On successful removal, if $_FZF_HIST_RM_FLAG is set, touches that file so
+# the caller knows to reload its in-memory history.
+: "${HISTFILE:=$HOME/.zsh_history}"
+cmd="$1"
+[ -z "$cmd" ] && exit 0
+[ -f "$HISTFILE" ] || exit 0
+
+tmp=$(mktemp "${HISTFILE}.XXXXXX") || exit 1
+count_file="${tmp}.count"
+trap 'rm -f "$tmp" "$count_file"' EXIT INT TERM
+
+if ! CMD="$cmd" LC_ALL=C awk '
+  BEGIN { cmd = ENVIRON["CMD"]; removed = 0 }
+  /^: [0-9]+:[0-9]+;/ {
+    line_cmd = $0
+    sub(/^[^;]*;/, "", line_cmd)
+    rebuilt = line_cmd
+    n = 1
+    lines[1] = $0
+    capped = 0
+    while (rebuilt ~ /\\$/) {
+      if (n >= 100) { capped = 1; break }
+      sub(/\\$/, "", rebuilt)
+      if ((getline next_line) <= 0) break
+      lines[++n] = next_line
+      rebuilt = rebuilt " " next_line
+    }
+    if (!capped && rebuilt == cmd) { removed += n; next }
+    for (i = 1; i <= n; i++) print lines[i]
+    next
+  }
+  { print }
+  END { print removed+0 > "/dev/stderr" }
+' "$HISTFILE" 2>"$count_file" >"$tmp"; then
+  exit 1
+fi
+
+removed=$(cat "$count_file")
+case "$removed" in
+  ''|*[!0-9]*) exit 1 ;;
+esac
+[ "$removed" -gt 0 ] || exit 0  # no match: nothing to do, leave file alone
+
+orig_lines=$(wc -l < "$HISTFILE" | tr -d ' ')
+new_lines=$(wc -l < "$tmp" | tr -d ' ')
+expected=$((orig_lines - removed))
+if [ "$new_lines" -ne "$expected" ]; then
+  printf 'fzf-hist-rm: sanity check failed (expected %d lines, got %d); aborting\n' \
+    "$expected" "$new_lines" >&2
+  exit 1
+fi
+
+if [ "$removed" -gt 50 ]; then
+  printf 'fzf-hist-rm: refusing to remove %d entries in a single action; aborting\n' \
+    "$removed" >&2
+  exit 1
+fi
+
+cp "$HISTFILE" "$HISTFILE.bak" || exit 1
+mv "$tmp" "$HISTFILE" || exit 1
+
+if [ -n "$_FZF_HIST_RM_FLAG" ]; then
+  : > "$_FZF_HIST_RM_FLAG"
+fi
