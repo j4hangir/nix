@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # 1st Home: jump past p10k prompt (prompt_char + dir + optional vcs) to the typed command.
-# 2nd Home (cursor unmoved): jump to top of buffer.
+# 2nd Home (cursor unmoved): jump to start of line.
 
 state_x=$(tmux show-options -gqv @home_x)
 state_y=$(tmux show-options -gqv @home_y)
@@ -8,7 +8,7 @@ cur_x=$(tmux display-message -p "#{copy_cursor_x}")
 cur_y=$(tmux display-message -p "#{copy_cursor_y}")
 
 if [[ -n $state_x && $cur_x == $state_x && $cur_y == $state_y ]]; then
-    tmux send-keys -X history-top
+    tmux send-keys -X start-of-line
     tmux set-option -g @home_x ""
     tmux set-option -g @home_y ""
     exit 0
