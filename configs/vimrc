@@ -109,6 +109,21 @@ vnoremap <F1> :set invfullscreen<CR>
 " Formatting
 map <leader>q gqip
 
+" Mirror yanks to system clipboard via cb (cross-platform: pbcopy / wl-copy /
+" xclip / OSC 52). Works regardless of vim's +clipboard compile flag — root
+" and minimal builds often ship without it.
+if executable('cb')
+  if has('clipboard')
+    set clipboard=unnamed,unnamedplus
+  endif
+  augroup CbYankSync
+    autocmd!
+    autocmd TextYankPost * if v:event.operator ==# 'y'
+          \ | call system('cb', join(v:event.regcontents, "\n"))
+          \ | endif
+  augroup END
+endif
+
 " Visualize tabs and newlines
 set listchars=tab:▸\ ,eol:¬
 " Uncomment this to enable by default:
