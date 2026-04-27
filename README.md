@@ -33,7 +33,7 @@ zsh  git  curl  vim  tmux
 ## ⚡ Quickstart
 
 ```bash
-git clone --recursive git@git.j4hangir.com:j4hangir/nix.git ~/nix
+git clone --recursive git@github.com:j4hangir/nix.git ~/nix
 cd ~/nix
 ./setup.sh
 ```
@@ -67,7 +67,7 @@ That's it. `setup.sh` handles everything in one run:
 - Vi copy mode via `cb` (pbcopy / wl-copy / xclip / xsel / OSC 52)
 - Mouse support, `|` and `-` to split, 30k line scrollback
 - `Shift-H` to toggle pane logging
-- Plugins: [tmux-fingers](https://git.j4hangir.com/tmux/tmux-fingers) (hint-based copy, prefix + `h`) and [tmux-jump](https://git.j4hangir.com/tmux/tmux-jump) (EasyMotion-style cursor jumps, prefix + `i`)
+- Plugins: [tmux-fingers](https://github.com/j4hangir/tmux-fingers) (hint-based copy, prefix + `h`) and [tmux-jump](https://github.com/j4hangir/tmux-jump) (EasyMotion-style cursor jumps, prefix + `i`)
 
 ### 🛠️ Scripts
 
@@ -176,7 +176,7 @@ OS detection happens in `utils/os_detect.sh` and is stored in `$os`. Many aliase
 
 ## 🙌 Credits
 
-Built and maintained by [**j4hangir**](https://git.j4hangir.com/j4hangir).
+Built and maintained by [**j4hangir**](https://github.com/j4hangir).
 
 ## 📜 License
 
