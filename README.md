@@ -181,6 +181,10 @@ OS detection happens in `utils/os_detect.sh` and is stored in `$os`. Many aliase
 | `$NIXDIR` | Absolute path to this repo at runtime |
 | `$NOTIVE_AUTH` | Auth token for the [notive](https://notive.j4hangir.com) push service |
 
+## 🙌 Credits
+
+Built and maintained by [**j4hangir**](https://git.j4hangir.com/j4hangir).
+
 ## 📜 License
 
 Personal dotfiles — use whatever you find useful.
