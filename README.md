@@ -43,14 +43,6 @@ That's it. `setup.sh` handles everything in one run:
 - 🐚 Install [oh-my-zsh](https://ohmyz.sh) + shell plugins via [Antigen](https://github.com/zsh-users/antigen)
 - 🔗 Wire up `~/.zshrc` and `~/.vimrc`
 
-## 🔄 Daily Use
-
-| Command | What it does |
-|---|---|
-| `nix-reload` | Re-source the entire shell config |
-| `nix-update` | `git pull` + reload |
-| `nix-cd` | Jump to the nix repo |
-
 ## 📦 What's Inside
 
 ### 🐚 Zsh
@@ -75,6 +67,7 @@ That's it. `setup.sh` handles everything in one run:
 - Vi copy mode via `cb` (pbcopy / wl-copy / xclip / xsel / OSC 52)
 - Mouse support, `|` and `-` to split, 30k line scrollback
 - `Shift-H` to toggle pane logging
+- Plugins: [tmux-fingers](https://git.j4hangir.com/tmux/tmux-fingers) (hint-based copy, prefix + `h`) and [tmux-jump](https://git.j4hangir.com/tmux/tmux-jump) (EasyMotion-style cursor jumps, prefix + `i`)
 
 ### 🛠️ Scripts
 
