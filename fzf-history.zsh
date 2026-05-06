@@ -29,18 +29,18 @@ fzf-execute-command() {
   export _FZF_HIST_RM_FLAG="$hist_rm_flag"
 
   # Pick a command from history using fzf
-  # - fzf-hist-list reads HISTFILE (already deduped, recency-ordered); sourcing
-  #   from it means the line fzf shows matches the file byte-for-byte, so
-  #   `fzf-hist-rm {}` can match exactly instead of failing on whitespace drift.
-  # - --scheme=history: scoring tuned for command history (prefix + recency bias)
-  # - --tiebreak=index: recency breaks ties among equal scores
+  # - fzf-hist-list reads HISTFILE and emits unique commands sorted by frecency
+  #   (freq * recency-decay), highest first. Lines match the joined on-disk
+  #   form so `fzf-hist-rm {}` can match exactly.
+  # - --no-sort: keep frecency order; fzf only filters by typed query and
+  #   never re-ranks by fuzzy score.
   # --listen 0 starts an HTTP control socket on a random port and exports
   # $FZF_PORT to subprocesses. fzf-hist-notify uses it to auto-clear the
   # header after 5s; without it, the "deleted:" / "restored:" message would
   # stick until the next action.
   selected=$(fzf-hist-list | fzf \
     --height 40% --border --layout=reverse-list \
-    --scheme=history --tiebreak=index \
+    --no-sort \
     --listen 0 \
     --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \

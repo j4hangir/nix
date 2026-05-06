@@ -1,14 +1,24 @@
 #!/bin/sh
-# Print commands from zsh $HISTFILE (EXTENDED_HISTORY format),
-# most recent first, deduplicated. Multi-line commands (lines ending
-# with `\`) are joined into a single row for display. Used by
-# fzf-history.zsh. Read-only — does not mutate $HISTFILE.
+# Print commands from zsh $HISTFILE (EXTENDED_HISTORY format), ranked by
+# frecency: each entry's score is sum_i exp(-age_i / TAU), so frequent and
+# recent commands float to the top. Multi-line commands (lines ending with
+# `\`) are joined into a single row. Used by fzf-history.zsh. Read-only —
+# does not mutate $HISTFILE.
 : "${HISTFILE:=$HOME/.zsh_history}"
 [ -f "$HISTFILE" ] || exit 0
+
+now=$(date +%s)
+# Decay constant in seconds (~10 days): a command used once 10 days ago
+# scores ~0.37; once today scores ~1; ten times today scores ~10.
+TAU=864000
+
 # LC_ALL=C: history files often contain stray bytes from paste / terminal
 # escapes — forcing bytewise processing keeps awk from aborting on them.
-LC_ALL=C awk '
+LC_ALL=C awk -v now="$now" -v tau="$TAU" '
   /^: [0-9]+:[0-9]+;/ {
+    ts = $0
+    sub(/^: /, "", ts)
+    sub(/:.*/, "", ts)
     cmd = $0
     sub(/^[^;]*;/, "", cmd)
     n = 1
@@ -18,8 +28,17 @@ LC_ALL=C awk '
       cmd = cmd " " line
       n++
     }
-    print cmd
+    age = now - ts
+    if (age < 0) age = 0
+    score[cmd] += exp(-age / tau)
+    if (!(cmd in seen)) { order[++k] = cmd; seen[cmd] = 1 }
+  }
+  END {
+    for (i = 1; i <= k; i++) {
+      c = order[i]
+      printf "%.10f\t%s\n", score[c], c
+    }
   }
 ' "$HISTFILE" \
-  | LC_ALL=C awk '{a[NR]=$0} END {for (i=NR; i>0; i--) print a[i]}' \
-  | LC_ALL=C awk '!seen[$0]++'
+  | LC_ALL=C sort -t '	' -k1,1 -nr \
+  | LC_ALL=C cut -f2-
