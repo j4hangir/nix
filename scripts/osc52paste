@@ -1,0 +1,64 @@
+#!/bin/sh
+# Request the system clipboard via OSC 52 read; print decoded bytes to stdout.
+# Counterpart to osc52copy. Requires:
+#   - Terminal that supports OSC 52 read with a permission prompt
+#     (iTerm2: Settings -> General -> Selection -> "Applications in terminal
+#      may access pasteboard" set to Prompt; kitty/wezterm have equivalents).
+#   - Inside tmux: `set -g set-clipboard external` (or on) and, on tmux >= 3.3,
+#     `set -g allow-passthrough on` so the request reaches the outer terminal.
+
+set -e
+
+if [ ! -r /dev/tty ] || [ ! -w /dev/tty ]; then
+  echo "osc52paste: no controlling tty" >&2
+  exit 1
+fi
+
+# Inside tmux, wrap the request in DCS passthrough so the outer terminal sees
+# it (tmux otherwise eats OSC 52 sequences). Outside tmux, send it raw.
+if [ -n "$TMUX" ]; then
+  req='\033Ptmux;\033\033]52;c;?\a\033\\'
+else
+  req='\033]52;c;?\a'
+fi
+
+old=$(stty -g </dev/tty)
+restore() { stty "$old" </dev/tty 2>/dev/null || true; }
+trap restore EXIT INT HUP TERM
+
+# No echo, no canonical mode; return on first byte or after 3s idle.
+stty -echo -icanon min 0 time 30 </dev/tty
+
+# shellcheck disable=SC2059
+printf "$req" >/dev/tty
+
+# Single read up to 64KB; ample for typical clipboards.
+resp=$(dd if=/dev/tty bs=65536 count=1 2>/dev/null || true)
+
+restore
+
+# Extract the base64 payload between ";c;" and the terminator (BEL or ESC).
+b64=$(printf %s "$resp" | awk -v RS='\0' -v ORS= '
+  {
+    s = index($0, "]52;c;")
+    if (s == 0) exit 1
+    r = substr($0, s + 6)
+    n = length(r)
+    for (i = 1; i <= n; i++) {
+      c = substr(r, i, 1)
+      if (c == "\007" || c == "\033") { print substr(r, 1, i - 1); exit }
+    }
+  }
+')
+
+if [ -z "$b64" ]; then
+  echo "osc52paste: no response (terminal denied, timed out, or unsupported)" >&2
+  exit 1
+fi
+
+# BSD base64 (older macOS) uses -D; GNU and modern BSD accept -d.
+if base64 -d /dev/null >/dev/null 2>&1; then
+  printf %s "$b64" | base64 -d
+else
+  printf %s "$b64" | base64 -D
+fi

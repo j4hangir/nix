@@ -1,7 +1,10 @@
 #!/bin/sh
 # Cross-platform paste from clipboard (clipboard → stdout).
-# Same backend-selection rules as cb (sans OSC 52 — no reliable paste
-# equivalent): a backend is only used if its display session is present.
+# Backend order:
+#   macOS       → pbpaste
+#   Wayland     → wl-paste
+#   X11         → xclip / xsel
+#   fallback    → OSC 52 read (works over SSH; terminal prompts user)
 if [ "$(uname)" = "Darwin" ]; then
   pbpaste
 elif [ -n "$WAYLAND_DISPLAY" ] && command -v wl-paste >/dev/null 2>&1; then
@@ -10,6 +13,8 @@ elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
   xclip -selection clipboard -o
 elif [ -n "$DISPLAY" ] && command -v xsel >/dev/null 2>&1; then
   xsel --clipboard --output
+elif [ -r /dev/tty ] && [ -w /dev/tty ]; then
+  exec "$(dirname "$0")/osc52paste"
 else
   echo "cbp: no paste backend available" >&2
   exit 1
