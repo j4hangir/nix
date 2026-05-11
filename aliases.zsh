@@ -56,7 +56,53 @@ fi
 
 # process find
 pf() {
-	pgrep -af "$@" | awk -v w=$COLUMNS '{print substr($0,1,w)}' | grep --color=always -iE "$@|$"
+	local match_pat hi_pat pids w
+	match_pat="${(j:.*:)@}"
+	hi_pat="${(j:|:)@}"
+	pids=$(pgrep -f -- "$match_pat" 2>/dev/null | paste -sd, -)
+	[ -z "$pids" ] && return 1
+	w=$(tput cols 2>/dev/null || echo 80)
+	ps -ww -o pid,user,command -p "$pids" | awk -v w="$w" '
+		BEGIN {
+			cPID = "\033[36m"      # cyan
+			cUSR = "\033[2m"       # dim
+			cBIN = "\033[1;32m"    # bold green
+			cRST = "\033[0m"
+		}
+		NR == 1 {
+			printf "\033[1m%s%s\n", $0, cRST
+			next
+		}
+		{
+			match($0, /^ *[0-9]+ +[^ ]+ +/)
+			plen = RLENGTH
+			prefix = substr($0, 1, plen)
+			cmd = substr($0, plen + 1)
+
+			match(prefix, /[0-9]+/)
+			pid_start = RSTART; pid_len = RLENGTH
+			lead = substr(prefix, 1, pid_start - 1)
+			pid_part = substr(prefix, pid_start, pid_len)
+			user_part = substr(prefix, pid_start + pid_len)
+
+			sp = index(cmd, " ")
+			if (sp == 0) { token = cmd; args = "" }
+			else         { token = substr(cmd, 1, sp - 1); args = substr(cmd, sp) }
+
+			slash = 0
+			for (i = length(token); i >= 1; i--) {
+				if (substr(token, i, 1) == "/") { slash = i; break }
+			}
+			path_prefix = substr(token, 1, slash)
+			bin = substr(token, slash + 1)
+
+			printf "%s%s%s%s%s%s%s%s%s%s%s\n", \
+				lead, cPID, pid_part, cRST, \
+				cUSR, user_part, cRST, \
+				path_prefix, cBIN, bin, cRST args
+			if (length($0) > w) print ""
+		}
+	' | command grep --color=always -iE -- "$hi_pat|$"
 }
 # cd and ls
 cdl () {
