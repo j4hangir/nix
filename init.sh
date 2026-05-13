@@ -97,13 +97,6 @@ _nix_source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 _nix_source "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh"
 _nix_source "$ZSH_PLUGINS/powerlevel10k/powerlevel10k.zsh-theme"
 
-# Bracketed-paste handling: convert \r → \n inside pastes (tmux paste-buffer
-# sends CRs) and suppress per-char widgets like syntax-highlighting and
-# autosuggestions during the paste so long multi-line pastes don't hang.
-autoload -Uz bracketed-paste-magic
-zle -N bracketed-paste bracketed-paste-magic
-ZSH_HIGHLIGHT_MAXLENGTH=512
-
 # ---------------------------------------------------------------------------
 # 5. aliases & functions (after plugins so we can override)
 # ---------------------------------------------------------------------------
