@@ -97,6 +97,14 @@ _nix_source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 _nix_source "$ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh"
 _nix_source "$ZSH_PLUGINS/powerlevel10k/powerlevel10k.zsh-theme"
 
+# Route bracketed-paste through builtin .self-insert instead of the autosuggest/
+# syntax-highlight-wrapped self-insert. OMZ's default is 'self-*', which makes
+# every char of a paste re-run autosuggestion lookup + a full highlight redraw —
+# slow enough on multi-KB pastes that the user's Enter arrives before the paste
+# end marker is consumed, gets sucked into paste content as a literal ^M, and
+# the prompt looks "hung". Plugins re-run once after the paste ends.
+zstyle ':bracketed-paste-magic' active-widgets '.self-*'
+
 # ---------------------------------------------------------------------------
 # 5. aliases & functions (after plugins so we can override)
 # ---------------------------------------------------------------------------
