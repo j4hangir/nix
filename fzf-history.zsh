@@ -39,18 +39,21 @@ fzf-execute-command() {
   # - fzf-hist-list emits unique commands ranked by frecency (freq *
   #   recency-decay), best first. Lines match the joined on-disk form so
   #   `fzf-hist-rm {}` can match exactly.
-  # - --disabled turns off fzf's built-in search. change:reload instead runs
-  #   fzf-hist-rank on every keystroke: it reranks $hist_cache by fzf match
+  # - change:reload runs fzf-hist-rank on every keystroke: it filters
+  #   $hist_cache to the matching commands and reranks them by fzf match
   #   quality with a bounded recency lift, so a clearly better match still
   #   wins but recently-used commands get pulled up. Tune the recency weight
   #   via FZF_HIST_W_REC. Empty query just shows the frecency order.
+  # - --no-sort keeps fzf from re-sorting fzf-hist-rank's output; fzf's own
+  #   search stays enabled only so it highlights the matched characters
+  #   (every reranked line already matches, so nothing gets filtered out).
   # --listen 0 starts an HTTP control socket on a random port and exports
   # $FZF_PORT to subprocesses. fzf-hist-notify uses it to auto-clear the
   # header after 5s; without it, the "deleted:" / "restored:" message would
   # stick until the next action.
   selected=$(fzf < "$hist_cache" \
     --height 40% --border --layout=reverse-list \
-    --disabled \
+    --no-sort \
     --listen 0 \
     --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \
