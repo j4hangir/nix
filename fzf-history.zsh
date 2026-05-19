@@ -32,15 +32,18 @@ fzf-execute-command() {
   # - fzf-hist-list reads HISTFILE and emits unique commands sorted by frecency
   #   (freq * recency-decay), highest first. Lines match the joined on-disk
   #   form so `fzf-hist-rm {}` can match exactly.
-  # - --no-sort: keep frecency order; fzf only filters by typed query and
-  #   never re-ranks by fuzzy score.
+  # - --scheme=history: scoring tuned for command history; with a query typed,
+  #   fzf ranks by match quality so a contiguous substring (e.g. `solat` in
+  #   `cld attach solat`) beats scattered fuzzy hits regardless of frecency.
+  # - --tiebreak=index: equal-score matches (and the empty query) fall back to
+  #   fzf-hist-list's frecency order. --scheme=history implies this; explicit.
   # --listen 0 starts an HTTP control socket on a random port and exports
   # $FZF_PORT to subprocesses. fzf-hist-notify uses it to auto-clear the
   # header after 5s; without it, the "deleted:" / "restored:" message would
   # stick until the next action.
   selected=$(fzf-hist-list | fzf \
     --height 40% --border --layout=reverse-list \
-    --no-sort \
+    --scheme=history --tiebreak=index \
     --listen 0 \
     --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \
