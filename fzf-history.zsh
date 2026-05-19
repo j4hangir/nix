@@ -28,33 +28,43 @@ fzf-execute-command() {
   rm -f "$hist_rm_flag"
   export _FZF_HIST_RM_FLAG="$hist_rm_flag"
 
-  # Pick a command from history using fzf
-  # - fzf-hist-list reads HISTFILE and emits unique commands sorted by frecency
-  #   (freq * recency-decay), highest first. Lines match the joined on-disk
-  #   form so `fzf-hist-rm {}` can match exactly.
-  # - --scheme=history: scoring tuned for command history; with a query typed,
-  #   fzf ranks by match quality so a contiguous substring (e.g. `solat` in
-  #   `cld attach solat`) beats scattered fuzzy hits regardless of frecency.
-  # - --tiebreak=index: equal-score matches (and the empty query) fall back to
-  #   fzf-hist-list's frecency order. --scheme=history implies this; explicit.
+  # Frecency snapshot for this picker session. fzf-hist-rank reranks against
+  # it on every keystroke; delete/undo regenerate it in place so it stays in
+  # sync with HISTFILE.
+  local hist_cache="/tmp/fzf_hist_cache.$$"
+  fzf-hist-list > "$hist_cache"
+  export _FZF_HIST_CACHE="$hist_cache"
+
+  # Pick a command from history using fzf.
+  # - fzf-hist-list emits unique commands ranked by frecency (freq *
+  #   recency-decay), best first. Lines match the joined on-disk form so
+  #   `fzf-hist-rm {}` can match exactly.
+  # - --disabled turns off fzf's built-in search. change:reload instead runs
+  #   fzf-hist-rank on every keystroke: it reranks $hist_cache by fzf match
+  #   quality with a bounded recency lift, so a clearly better match still
+  #   wins but recently-used commands get pulled up. Tune the recency weight
+  #   via FZF_HIST_W_REC. Empty query just shows the frecency order.
   # --listen 0 starts an HTTP control socket on a random port and exports
   # $FZF_PORT to subprocesses. fzf-hist-notify uses it to auto-clear the
   # header after 5s; without it, the "deleted:" / "restored:" message would
   # stick until the next action.
-  selected=$(fzf-hist-list | fzf \
+  selected=$(fzf < "$hist_cache" \
     --height 40% --border --layout=reverse-list \
-    --scheme=history --tiebreak=index \
+    --disabled \
     --listen 0 \
     --prompt '> ' \
     --preview 'echo {}' --preview-window=up:3:hidden \
     --bind "tab:down,shift-tab:up,right:accept+execute-silent(echo right > $action_file),enter:accept+execute-silent(echo enter > $action_file)" \
-    --bind 'ctrl-e:transform-query(fzf-toggle-exact {q})+transform-prompt([[ {fzf:prompt} == EXACT* ]] && echo "> " || echo "EXACT > ")' \
-    --bind 'delete:execute-silent(fzf-hist-rm {})+transform-header(fzf-hist-notify deleted {})+reload(fzf-hist-list)' \
-    --bind 'ctrl-z:transform-header(fzf-hist-undo)+reload(fzf-hist-list)' \
+    --bind 'change:reload(fzf-hist-rank {q})' \
+    --bind 'ctrl-e:transform-query(fzf-toggle-exact {q})+transform-prompt([[ {fzf:prompt} == EXACT* ]] && echo "> " || echo "EXACT > ")+reload(fzf-hist-rank {q})' \
+    --bind "delete:execute-silent(fzf-hist-rm {})+transform-header(fzf-hist-notify deleted {})+reload(fzf-hist-list > $hist_cache; fzf-hist-rank {q})" \
+    --bind "ctrl-z:transform-header(fzf-hist-undo)+reload(fzf-hist-list > $hist_cache; fzf-hist-rank {q})" \
     --expect=ctrl-c 2>/dev/null)
 
   local exit_status=$?
   unset _FZF_HIST_RM_FLAG
+  rm -f "$hist_cache"
+  unset _FZF_HIST_CACHE
 
   # If fzf-hist-rm actually removed an entry, refresh in-memory history from
   # the (already-edited) file so up-arrow / ^R don't resurrect deleted entries.

@@ -1,0 +1,54 @@
+#!/bin/sh
+# Rerank zsh history for fzf reverse-search (Ctrl+R), lifting recently-used
+# commands without burying better matches. Called on every keystroke by the
+# change:reload bind in fzf-history.zsh, where fzf runs --disabled (its own
+# search is off).
+#
+#   $1               current fzf query (may carry a leading ' from ctrl-e)
+#   $_FZF_HIST_CACHE  frecency-ranked command list (best first), snapshotted
+#                     once per picker session by fzf-hist-list. Regenerated
+#                     here if unset/missing.
+#
+# Empty query -> emit the frecency list unchanged.
+# Otherwise   -> rank fzf's match-ranked subset (fzf --filter) by
+#                  score = matchRank - W_REC * recencyFactor      (lower wins)
+#                matchRank is fzf's own 1-based match order; recencyFactor is
+#                1 for the most recently-used match, 0 for the least. So
+#                recency lifts a command by at most W_REC rank positions: a
+#                clearly better match is never overtaken, but among matches
+#                within W_REC ranks of each other the recent one floats up.
+#
+# W_REC is the recency dial -- raise it to weight recency more, set 0 for
+# pure match quality. Override via FZF_HIST_W_REC (default 5).
+
+W_REC=${FZF_HIST_W_REC:-5}
+
+cache="${_FZF_HIST_CACHE:-}"
+if [ -z "$cache" ] || [ ! -f "$cache" ]; then
+  cache=$(mktemp "${TMPDIR:-/tmp}/fzf_hist_rank.XXXXXX") || exit 1
+  trap 'rm -f "$cache"' EXIT
+  fzf-hist-list > "$cache"
+fi
+
+query="$1"
+
+# Empty query: nothing to match against, keep pure frecency order.
+[ -n "$query" ] || { cat "$cache"; exit 0; }
+
+# fzf's own match-ranked subset, best match first. FZF_DEFAULT_OPTS is cleared
+# so display-only opts can't perturb --filter; --scheme=history mirrors the
+# command-history scoring; a leading ' (ctrl-e exact toggle) is honoured.
+matches=$(FZF_DEFAULT_OPTS= fzf --filter "$query" --scheme=history < "$cache")
+[ -n "$matches" ] || exit 0
+
+# Pass 1 (stdin = matches): matchRank = line number, n = total matches.
+# Pass 2 (cache, frecency order): recencyRank = running count of matches seen.
+# Emit "score<TAB>cmd"; sort ascending, drop the score.
+printf '%s\n' "$matches" | LC_ALL=C awk -v wr="$W_REC" '
+  FNR==NR { mr[$0] = FNR; n = FNR; next }
+  ($0 in mr) {
+    rr++
+    factor = (n > 1) ? (n - rr) / (n - 1) : 1
+    printf "%.4f\t%s\n", mr[$0] - wr * factor, $0
+  }
+' - "$cache" | LC_ALL=C sort -n -k1,1 | LC_ALL=C cut -f2-
