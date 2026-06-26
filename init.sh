@@ -158,11 +158,33 @@ fi
 # (AUTO_NAME_DIRS) and prints "~_p9k__cwd" for deep paths.
 if [[ -z "$TMUX" ]]; then
   # precmd runs with no args → idle title is just user@host:cwd.
-  # preexec passes the command line as $1 → append the program name so the
-  # title shows "user@host:cwd — vim" while a command runs (nvim et al. don't
-  # set their own title). %% escapes any % in the command so print -P is safe.
+  # preexec passes the command line as $1 → resolve the foreground app and
+  # append it ("user@host:cwd — vim") since nvim et al. don't set their own
+  # title. This is a best-effort guess: it takes the last command in a
+  # &&/||/;/| chain and skips VAR=val prefixes and wrappers (sudo, etc.), so
+  # "cd dir && gl && claude" → claude. It can't know which command runs
+  # longest, so "claude && print exit" mislabels as "print" — the shell is
+  # blocked during the command and can't track the real foreground process.
   _nix_set_title() {
-    local cmd=${1%% *}
+    emulate -L zsh
+    local cmd=
+    if (( $# )); then
+      local -a toks=(${(z)1})            # tokenize like the parser (quote-aware)
+      local i
+      for (( i=$#toks; i>0; i-- )); do   # drop up to the last command separator
+        case $toks[i] in
+          ';'|'&&'|'||'|'|'|'&'|'|&') toks=(${toks[i+1,-1]}); break ;;
+        esac
+      done
+      local w
+      for w in $toks; do                 # first token that's a real command
+        case $w in
+          [A-Za-z_]*=*) continue ;;                      # VAR=val prefix
+          sudo|command|nohup|exec|time|env) continue ;;  # wrappers
+        esac
+        cmd=${w:t}; break                # basename: /usr/bin/python3 → python3
+      done
+    fi
     print -Pn "\e]0;%n@%M:${PWD/#$HOME/~}${cmd:+ — ${cmd//\%/%%}}\a"
   }
   autoload -Uz add-zsh-hook
