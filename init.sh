@@ -157,7 +157,14 @@ fi
 # Roll our own because OMZ's %~ picks up p10k's $_p9k__cwd as a named dir
 # (AUTO_NAME_DIRS) and prints "~_p9k__cwd" for deep paths.
 if [[ -z "$TMUX" ]]; then
-  _nix_set_title() { print -Pn "\e]0;%n@%M:${PWD/#$HOME/~}\a" }
+  # precmd runs with no args → idle title is just user@host:cwd.
+  # preexec passes the command line as $1 → append the program name so the
+  # title shows "user@host:cwd — vim" while a command runs (nvim et al. don't
+  # set their own title). %% escapes any % in the command so print -P is safe.
+  _nix_set_title() {
+    local cmd=${1%% *}
+    print -Pn "\e]0;%n@%M:${PWD/#$HOME/~}${cmd:+ — ${cmd//\%/%%}}\a"
+  }
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd _nix_set_title
   add-zsh-hook preexec _nix_set_title
