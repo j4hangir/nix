@@ -84,5 +84,10 @@ setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 # colors
 command -v dircolors &>/dev/null && eval "$(dircolors -b)"
-LS_COLORS=$LS_COLORS:'ow=30;44:'
+# Make "other-writable" directories legible. GNU ls defaults paint them on a
+# green background — ow=34;42 (blue-on-green, unreadable) for non-sticky and
+# tw=30;42 for sticky — and every bind-mounted dir (e.g. the Claude sandbox's
+# /workspace) shows up as other-writable. Render both as bright cyan with no
+# background: readable on any terminal bg, still distinct from normal (blue) dirs.
+LS_COLORS="$LS_COLORS:ow=01;36:tw=01;36"
 export LS_COLORS
