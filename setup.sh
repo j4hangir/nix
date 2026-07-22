@@ -60,10 +60,19 @@ LINE="so $DIR/configs/vimrc"
 FILE=~/.vimrc
 grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending vimrc to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
 
-# Prepend tmux.conf (idempotent)
+# Prepend tmux.conf (idempotent). NIXDIR must be set here, before the source
+# line: tmux expands $NIXDIR while lexing configs/tmux.conf, so setting it
+# inside that file is too late (%hidden would fix it but needs tmux >= 3.2).
+ENVLINE="set-environment -g NIXDIR $DIR"
 LINE="source $DIR/configs/tmux.conf"
 FILE=~/.tmux.conf
-grep -qF "$LINE" "$FILE" 2>/dev/null || ( echo "Prepending tmux.conf to $FILE" && echo -e "$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE" )
+if ! grep -qF "$LINE" "$FILE" 2>/dev/null; then
+  echo "Prepending tmux.conf to $FILE"
+  echo -e "$ENVLINE\n$LINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE"
+elif ! grep -qF "$ENVLINE" "$FILE" 2>/dev/null; then
+  echo "Prepending NIXDIR bootstrap to $FILE"
+  echo -e "$ENVLINE\n$(cat "$FILE" 2>/dev/null)" > "$FILE"
+fi
 
 # ---------------------------------------------------------------------------
 # 3. Wire gitconfig (idempotent — uses git include, won't touch user.name/email)
