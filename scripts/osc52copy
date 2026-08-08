@@ -3,7 +3,53 @@
 # When inside tmux we bypass tmux and write straight to the attached client's
 # TTY, so no DCS passthrough wrapping is needed (and wrapping here breaks
 # iTerm2, which doesn't speak DCS tmux passthrough).
+#
+# The payload is capped. Every terminal has an OSC string limit; past it the
+# sequence is abandoned and the remaining base64 lands on screen as literal
+# text. Because the write bypasses tmux, tmux never sees that mess, so it is
+# not even scrollable. Oversized input still reaches the clipboard: we copy
+# the tail (with a build log, the end is the part you wanted) and stash the
+# whole thing in a tmux buffer and a spill file so nothing is lost.
+
+# Cap on the base64 payload, in bytes; comfortably under every terminal's OSC
+# limit. Override with OSC52_MAX.
+OSC52_MAX=${OSC52_MAX:-65536}
+
+# BSD base64 (older macOS) uses -D; GNU and modern BSD accept -d.
+b64dec () {
+  if base64 -d /dev/null >/dev/null 2>&1; then base64 -d; else base64 -D; fi
+}
+
 data=$(base64 | tr -d "\n")
+
+if [ "${#data}" -gt "$OSC52_MAX" ]; then
+  raw_max=$((OSC52_MAX / 4 * 3))
+
+  spill="${XDG_CACHE_HOME:-$HOME/.cache}/osc52copy"
+  if mkdir -p "$spill" 2>/dev/null; then
+    spill="$spill/last"
+  else
+    spill="${TMPDIR:-/tmp}/osc52copy.last"
+  fi
+
+  if printf %s "$data" | b64dec >"$spill" 2>/dev/null; then
+    raw=$(wc -c <"$spill" | tr -d " ")
+    buf=""
+    if [ -n "$TMUX" ] && tmux load-buffer "$spill" 2>/dev/null; then
+      buf=", all of it in the tmux buffer (prefix + ])"
+    fi
+    # Truncate on raw bytes, not base64, so the clipboard gets valid text.
+    data=$(tail -c "$raw_max" "$spill" | base64 | tr -d "\n")
+    printf 'osc52copy: %s bytes is over the OSC 52 cap; clipboard has the last %s%s. Full text: %s\n' \
+      "$raw" "$raw_max" "$buf" "$spill" >&2
+  else
+    # Nowhere to spill — still refuse to emit an oversized sequence.
+    data=$(printf %s "$data" | b64dec | tail -c "$raw_max" | base64 | tr -d "\n")
+    printf 'osc52copy: input over the OSC 52 cap; clipboard has the last %s bytes\n' \
+      "$raw_max" >&2
+  fi
+fi
+
 osc=$(printf '\033]52;c;%s\a' "$data")
 
 if [ -n "$TMUX" ]; then
