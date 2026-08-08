@@ -7,6 +7,22 @@
 NIXDIR="${NIXDIR:-/nix}"
 pane=$(tmux capture-pane -pS -)
 
+# "Everything since the last prompt" is unbounded by construction — a nix
+# build log fills the whole scrollback. Bound it here; osc52copy caps again
+# for its own transport, this just avoids shovelling megabytes around.
+YANK_MAX_BYTES=${YANK_MAX_BYTES:-1048576}
+trunc=""
+
+copy () {
+  if [ "$(printf '%s\n' "$1" | wc -c | tr -d ' ')" -gt "$YANK_MAX_BYTES" ]; then
+    printf '%s\n' "$1" | tail -c "$YANK_MAX_BYTES" | "$NIXDIR/scripts/cb"
+    trunc=" (last ${YANK_MAX_BYTES}B)"
+  else
+    printf '%s\n' "$1" | "$NIXDIR/scripts/cb"
+    trunc=""
+  fi
+}
+
 notify () {
   gap=$1; suffix=$2
   tmux set -g @notify "#[fg=yellow,bold] yanked $gap line$([ "$gap" -ne 1 ] && echo s)$suffix"
@@ -30,8 +46,8 @@ if [ "$last_prompt" -lt "$total_lines" ]; then
   chunk=$(echo "$pane" | sed -n "${start},${total_lines}p")
   if echo "$chunk" | grep -q '[^[:space:]]'; then
     gap=$((total_lines - last_prompt))
-    echo "$chunk" | "$NIXDIR/scripts/cb"
-    notify "$gap" " (running)"
+    copy "$chunk"
+    notify "$gap" " (running)$trunc"
     exit 0
   fi
 fi
@@ -48,8 +64,8 @@ for ln in $lines_list; do
     if [ "$gap" -gt 0 ]; then
       start=$((ln + 1))
       end=$((prev_start - 1))
-      echo "$pane" | sed -n "${start},${end}p" | "$NIXDIR/scripts/cb"
-      notify "$gap" ""
+      copy "$(echo "$pane" | sed -n "${start},${end}p")"
+      notify "$gap" "$trunc"
       exit 0
     fi
   fi
