@@ -91,3 +91,9 @@ command -v dircolors &>/dev/null && eval "$(dircolors -b)"
 # background: readable on any terminal bg, still distinct from normal (blue) dirs.
 LS_COLORS="$LS_COLORS:ow=01;36:tw=01;36"
 export LS_COLORS
+
+# Brighten zsh-autosuggestions' ghost text. The plugin default (fg=8, #555555)
+# is nearly invisible on this translucent dark background — use a lighter grey:
+# readable, still dimmer than real input (#bbbbbb) so it reads as a suggestion.
+# Matches the fish autosuggestion color.
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#9e9e9e'
