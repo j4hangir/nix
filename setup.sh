@@ -55,6 +55,16 @@ for pair in "$HOME/.vimrc:so $DIR/.vimrc" "$HOME/.tmux.conf:source $DIR/.tmux.co
   fi
 done
 
+# A dangling symlink (e.g. ~/.vimrc -> a repo path that no longer exists) makes
+# vim silently load nothing, and the '>' redirects below would write *through*
+# the link into the repo instead of creating a real dotfile. Drop it first.
+for FILE in ~/.vimrc ~/.tmux.conf; do
+  if [ -L "$FILE" ] && [ ! -e "$FILE" ]; then
+    echo "Removing dangling symlink $FILE -> $(readlink "$FILE")"
+    rm -f "$FILE"
+  fi
+done
+
 # Prepend vimrc (idempotent)
 LINE="so $DIR/configs/vimrc"
 FILE=~/.vimrc
