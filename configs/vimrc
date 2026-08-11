@@ -45,6 +45,20 @@ filetype plugin indent on
 " Security
 set modelines=0
 
+" Never write swap/backup/undo files next to the file being edited. Vim's
+" default 'directory' starts with '.', so editing a web docroot leaves a
+" .foo.swp beside it — cleartext, world-readable, and fetchable over HTTP if
+" the server only blocks .ht*. Trailing '//' encodes the full path into the
+" swap filename so same-named files in different dirs don't collide.
+for s:d in ['swap', 'backup', 'undo']
+  if !isdirectory($HOME . '/.vim/' . s:d)
+    call mkdir($HOME . '/.vim/' . s:d, 'p', 0700)
+  endif
+endfor
+set directory=~/.vim/swap//
+set backupdir=~/.vim/backup//
+set undodir=~/.vim/undo//
+
 set nonumber
 
 " Show file stats

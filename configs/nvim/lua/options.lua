@@ -32,6 +32,10 @@ o.incsearch = true
 o.modelines = 0
 o.number = false
 
+-- nvim already keeps swap under stdpath("state"), but 'backupdir' still starts
+-- with "." — an interrupted write leaves a backup beside the file. Drop it.
+o.backupdir:remove(".")
+
 o.visualbell = true
 o.termguicolors = true
 o.background = "dark"
